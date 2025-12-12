@@ -1,0 +1,2514 @@
+\documentclass[12pt, letterpaper, reqno]{amsart}
+
+\usepackage[margin=1.3in]{geometry}
+\usepackage{microtype}
+\usepackage[T1]{fontenc}
+\usepackage{amssymb,mathtools,bm}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue
+}
+\usepackage[nameinlink]{cleveref}
+\usepackage{enumitem}
+
+\setlist[itemize]{leftmargin=1.35em,itemsep=0.25em,topsep=0.25em,parsep=0pt}
+
+\AtBeginDocument{
+  \setlength{\abovedisplayskip}{9pt}
+  \setlength{\belowdisplayskip}{9pt}
+  \setlength{\abovedisplayshortskip}{6pt}
+  \setlength{\belowdisplayshortskip}{6pt}
+}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Hh}{\mathbb{H}}
+\newcommand{\D}{\mathbb{D}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Id}{\mathrm{Id}}
+\newcommand{\ip}[2]{\left\langle #1,#2\right\rangle}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\newcommand{\opnorm}[1]{\left\|#1\right\|_{2\to 2}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\wt}{\widetilde}
+\newcommand{\wh}{\widehat}
+\newcommand{\lin}{\mathrm{lin}}
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+\newcommand{\sigmaone}{\begin{psmallmatrix}0&1\\1&0\end{psmallmatrix}}
+\newcommand{\sigmathree}{\begin{psmallmatrix}1&0\\0&-1\end{psmallmatrix}}
+\allowdisplaybreaks
+
+\title[Canonical systems and exponential packets]{Canonical systems and exponential packets:\\
+Finite-length linear theory and block discretization}
+\author{Sharan Thota}
+\date{\today}
+
+\begin{document}
+
+\begin{abstract}
+We study trace-normalized canonical systems $JY'(s,z)=zH(s)Y(s,z)$ on $[0,L]$ with block-constant Hamiltonians in a fixed uniformly positive definite compact set. Attaching the canonical tail $H\equiv \tfrac12 I$ on $[L,\infty)$ allows us to invoke standard Weyl/Hermite--Biehler theory, though all computations depend only on the finite-interval transfer matrix.
+
+Discretizing $[0,L]$ into $N$ blocks of length $\ell=L/N$ and using complex block coordinates $p_j=k_j+ih_j$, we show that at the base Hamiltonian $H_{\mathrm{base}}\equiv\tfrac12 I$ the gauge-normalized endpoint function $G_L(z)=e^{izL/2}E_L(z)$ satisfies $G_L\equiv1$, and its directional derivative in block $j$ produces a single exponential packet
+\[
+e^{izL/2}\,\partial_{p_j}^{\mathrm{dir}}E_L(z)\big|_{H_{\mathrm{base}}}
+=4\,\sin(u)\,e^{iq_j u},\qquad u=\frac{z\ell}{2},\ q_j=2j+1.
+\]
+Sampling on the seam $z=x+i\eta$ and normalizing by $|\sin(u)|$, the base Jacobian factors as $J_\C^{(\eta)}=W^{(\eta)}FD^{(\eta)}$ with $F^\ast F=PN\,I_N$, yielding explicit singular values $\sigma_j(J_\C^{(\eta)})=4\sqrt{PN}\,e^{-(2j+1)\alpha}$, $\alpha=\eta\ell/2$. Combined with a Lipschitz estimate for the Jacobian (via double Duhamel), this gives a quantitative local inversion statement from finitely many seam samples to the block Hamiltonian.
+\end{abstract}
+
+\maketitle
+\tableofcontents
+
+\section*{Introduction}
+
+Canonical systems in the sense of de~Branges \cite{deBranges1968,Romanov2014} provide a flexible framework for encoding entire functions via first-order matrix differential equations. In this paper, we develop a self-contained, finite-length linear theory for such systems which is tailored to block discretizations. Our goal is to isolate an "exponential packet" structure at the canonical base and to understand how it appears in the boundary map from block parameters to endpoint data.
+
+More concretely, we consider real Hamiltonians $H$ on $[0,L]$ with $H(s)\succeq0$ and $\operatorname{tr}H(s)\equiv1$, and we attach the canonical tail $H\equiv\tfrac12 I$ on $[L,\infty)$.
+
+\medskip
+\noindent\textbf{Canonical tail extension.}
+Given a Hamiltonian $H$ on $[0,L]$, we extend it to the half-line by
+\[
+H_{\mathrm{ext}}(s):=
+\begin{cases}
+H(s),& s\in[0,L],\\[2pt]
+\tfrac12 I,& s\ge L.
+\end{cases}
+\]
+We use $H_{\mathrm{ext}}$ only to invoke standard half-line Hermite-Biehler/Weyl theory (existence of $m_L$, Schur/Herglotz properties, etc.). All packet and Jacobian computations below depend only on the finite-interval transfer matrix $\Phi(L,0;z)$, hence only on $H|_{[0,L]}$.
+\medskip
+
+For the quantitative inversion statements we restrict, blockwise, to a fixed compact constraint set that is uniformly bounded away from degeneracy (so each block is uniformly positive definite). The fundamental solution of the system
+\[
+JY'(s)=zH(s)Y(s),\qquad J:=\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix},\quad z\in\C,
+\]
+induces both an endpoint Hermite-Biehler (HB) function $E_L$ and a Weyl function $m_L$. The endpoint ratio $\upsilon_L=E_L^{\!*}/E_L$ is a Schur function on the upper half-plane $\Hh:=\{z\in\C:\Im z>0\}$, and the Weyl-Titchmarsh function $m_L$ (for the canonical tail extension) is Herglotz; hence its Cayley transform $v_L=(m_L-i)/(m_L+i)$ is Schur on $\Hh$ (see, e.g., \cite[Ch.~I]{Duren1970}; see also \cite[Ch.~II]{Garnett2007}). Optional $\mathrm{SU}(1,1)$/Schur background is collected in \Cref{sec:strip-SU11} and is not used in the finite-length linear theory below.
+
+We then discretize $H$ into $N$ constant blocks of equal length $\ell=L/N$ and regard the block parameters as coordinates in a finite-dimensional parameter space. (No result in the finite-length theory below relies on any particular scaling of $N$ with $L$.) We denote by $H_{\mathrm{base}}\equiv\tfrac12 I$ the constant Hamiltonian on $[0,L]$. At this base Hamiltonian the transfer matrix is a simple rotation $R(-\tfrac{z}{2}(s-t))$, and the endpoint HB function is explicitly $E_{0,L}(z)=e^{-izL/2}$. We show that the first-order variation of $E_L$ with respect to a single block parameter produces a \emph{single complex exponential packet} when observed on a canonical sampling grid.
+
+The main output of Sections~1-4 is the following picture. Fix $L=N\ell$ and an integer factor $P\ge1$ (we call $P\ge2$ \emph{oversampling}), set
+\[
+M:=PN,\qquad
+u_k:=\frac{\pi k}{N},\qquad k=0,1,\dots,M-1,
+\]
+and choose odd block frequencies
+\[
+q_j:=2j+1,\qquad j=0,1,\dots,N-1.
+\]
+
+For a suitable complex coordinate $p_j$ on the $j$-th block, the linearization of the gauge-normalized endpoint Hermite-Biehler function
+\[
+G_L(z):=e^{+izL/2}E_L(z)
+\]
+at the base Hamiltonian has the form
+\[
+e^{+ixL/2}\,\partial_{p_j}^{\mathrm{dir}}E_L(x)\Big|_{H_{\mathrm{base}}}
+=4\,\sin u\,e^{iq_j u},\qquad u=\frac{x\ell}{2}.
+\] 
+Thus each block contributes exactly one odd complex exponential packet $\sin u\,e^{iq_j u}$. Choosing real coordinates obtained from the real and imaginary parts of $p_j$, we obtain two real packets per block,
+\[
+g_j^{(1)}(u):=\sin u\cos(q_j u),\qquad
+g_j^{(2)}(u):=\sin u\sin(q_j u),
+\]
+with a uniformly well-conditioned change of basis on each block.
+
+\bigskip
+
+\section{Canonical systems: setup, base flow, and endpoint functions}\label{sec:CS}
+
+We begin by recalling the standard canonical-systems framework and fixing the normalization of the endpoint Hermite-Biehler function and Weyl function on a finite interval.
+
+\subsection{Canonical systems and transfer matrices}
+
+We use the standard notation $\C$ and $\R$ for the complex and real numbers, and $\Hh:=\{z\in\C:\Im z>0\}$ for the upper half-plane.
+
+Let $H:[0,L]\to\R^{2\times2}$ be a real symmetric, positive semidefinite (PSD) matrix function with $\operatorname{tr}H(s)\equiv1$ a.e.\ on $[0,L]$. We consider the canonical system
+\begin{equation}\label{eq:CS}
+JY'(s)=zH(s)Y(s),\qquad s\in[0,L],\ z\in\C,
+\end{equation}
+with
+\[
+J=\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}.
+\]
+
+Throughout, $\|\cdot\|$ for matrices denotes the operator norm induced by the standard Euclidean norm on the relevant finite-dimensional space, and $\|\cdot\|$ for vectors denotes the corresponding Euclidean norm.
+
+For each $z\in\C$ there is a unique fundamental matrix $\Phi(s,t;z)$ satisfying
+\[
+\Phi(t,t;z)=I,\qquad J\partial_s\Phi(s,t;z)=zH(s)\Phi(s,t;z),
+\]
+and the cocycle identity
+\[
+\Phi(s,u;z)\,\Phi(u,t;z)=\Phi(s,t;z),\qquad s,u,t\in[0,L].
+\]
+We abbreviate $\Phi(L,0;z)$ to $\Phi(L;z)$ and write
+\[
+\Phi(L;z)=
+\begin{psmallmatrix}
+A^\Phi(z) & B^\Phi(z) \\
+C^\Phi(z) & D^\Phi(z)
+\end{psmallmatrix}.
+\]
+
+The following elementary estimate will be used repeatedly.
+
+\begin{lemma}[Propagator bounds]\label{lem:Phi-bds}
+If $H(s)$ is real symmetric PSD and $\tr H(s)\equiv1$ a.e.\ on $[0,L]$, then for any $z\in\C$ and $s\ge t$,
+\[
+\|\Phi(s,t;z)\|\le e^{|z|\,(s-t)},\qquad
+\|\Phi(t,s;z)\|\le e^{|z|\,(s-t)}.
+\]
+\end{lemma}
+
+\begin{proof}
+Write the system as $Y'(u)=A(u)Y(u)$ with $A(u):=-zJH(u)$. Since $H(u)$ is real symmetric and PSD, we have $\|H(u)\|=\lambda_{\max}(H(u))\le \sum_{i=1}^2\lambda_i(H(u))=\tr H(u)=1$, and $\|J\|=1$, hence $\|A(u)\|\le |z|$. Grönwall's inequality yields $\|\Phi(s,t;z)\|\le e^{|z|\,(s-t)}$ for $s\ge t$; see, e.g., \cite[Ch.~1]{CoddingtonLevinson1955}.
+
+For the second inequality, fix $s$ and set $\Psi(t):=\Phi(t,s;z)$. Differentiating the
+identity $\Phi(s,t;z)\,\Phi(t,s;z)=I$ with respect to $t$ yields
+\[
+\partial_t\Psi(t)=A(t)\Psi(t),\qquad \Psi(s)=I.
+\]
+Since $\|A(t)\|\le |z|$, the same Grönwall argument gives $\|\Phi(t,s;z)\|\le e^{|z|\,(s-t)}$.
+\end{proof}
+
+\subsection{Endpoint Hermite-Biehler function and Weyl function}
+
+Following de~Branges \cite{deBranges1968}, we normalize the endpoint entire function as 
+
+\begin{equation}\label{eq:EL-def}
+e_1 := 
+\begin{psmallmatrix}
+1\\[2pt]0
+\end{psmallmatrix}.
+\end{equation}
+
+\begin{equation}
+\lambda_+ := [\,1\ \ i\,],
+\qquad
+\|\lambda_+\| = \sqrt{2}.
+\end{equation}
+
+\begin{equation}
+\Theta(L,z)
+:= \Phi(L,0;z)\,e_1
+=
+\begin{psmallmatrix}
+\Theta_1(L,z)\\[2pt]
+\Theta_2(L,z)
+\end{psmallmatrix}.
+\end{equation}
+
+\begin{equation}
+E_L(z)
+:= \Theta_1(L,z) + i\,\Theta_2(L,z)
+= \lambda_+\,\Phi(L,0;z)\,e_1.
+\end{equation}
+
+\begin{equation}\label{eq:ALBL-def}
+A_L(z):=\tfrac12\big(E_L(z)+E_L^{\!*}(z)\big),
+\qquad
+B_L(z):=\frac{E_L^{\!*}(z)-E_L(z)}{2i}.
+\end{equation}
+
+\begin{remark}[Transfer-matrix entries vs.\ Hermite-Biehler splitting]
+The symbols $A^\Phi,B^\Phi,C^\Phi,D^\Phi$ denote entries of the transfer matrix $\Phi(L;z)$, whereas $A_L,B_L$ denote the Hermite-Biehler splitting of the scalar function $E_L$. These are distinct objects (despite the shared letter $A$).
+\end{remark}
+
+Here $F^{\!*}(z):=\overline{F(\overline z)}$ denotes Schwarz reflection across $\R$. Thus $A_L,B_L$ are real entire functions and $E_L=A_L-iB_L$; on $\R$ one has $A_L(x)=\Re E_L(x)$ and $B_L(x)=-\Im E_L(x)$.
+
+\begin{lemma}[HB normalization; endpoint and Weyl Schur functions]\label{lem:HB-normalization}
+Let $H$ be real, PSD with $\operatorname{tr}H\equiv1$ a.e.\ on $[0,L]$, and let $H_{\mathrm{ext}}$ be its canonical tail extension to $[0,\infty)$ defined by $H_{\mathrm{ext}}(s)=H(s)$ for $s\in[0,L]$ and $H_{\mathrm{ext}}(s)=\tfrac12 I$ for $s\ge L$. Let
+\[
+\Phi(L;z)=
+\begin{psmallmatrix}
+A^\Phi(z) & B^\Phi(z) \\
+C^\Phi(z) & D^\Phi(z)
+\end{psmallmatrix}
+\]
+be the transfer matrix from $0$ to $L$ for the finite-interval system, and define the endpoint entire function by
+\[
+E_L(z):=\lambda_+\,\Phi(L;z)\,e_1 = A^\Phi(z)+ i\,C^\Phi(z),
+\]
+equivalently $E_L(z)=\Theta_1(L,z)+i\Theta_2(L,z)$ with $\Theta(L,z)=\Phi(L;z)e_1$. Then $E_L$ is Hermite-Biehler: $|E_L^{\!*}(z)|<|E_L(z)|$ for $z\in\Hh$, hence $E_L$ has no zeros in $\Hh$. The endpoint ratio
+\[
+\upsilon_L(z):=\frac{E_L^{\!*}(z)}{E_L(z)},\qquad z\in\Hh,
+\]
+is therefore a Schur function on $\Hh$.
+
+Let $m_L(z)$ denote the Weyl-Titchmarsh function at the \emph{left endpoint} $s=0$ for the half-line Hamiltonian $H_{\mathrm{ext}}$. Equivalently, $(1,m_L(z))^\top$ is the unique (up to scaling) boundary vector at $s=0$ whose solution is $H_{\mathrm{ext}}$-square-integrable on $[0,\infty)$. Then $m_L$ is Herglotz on $\Hh$, and its Cayley transform
+\[
+v_L(z):=\frac{m_L(z)-i}{m_L(z)+i}
+\]
+is Schur on $\Hh$.
+\end{lemma}
+
+\begin{proof}
+By de~Branges \cite[Ch.~VI]{deBranges1968}, for real PSD $H_{\mathrm{ext}}$ with $\tr H_{\mathrm{ext}}\equiv1$ and canonical tail $H_{\mathrm{ext}}\equiv\tfrac12 I$ on $[L,\infty)$, the system is limit-point at $+\infty$. Hence the Weyl function $m_L$ at $s=0$ exists, is Herglotz on $\Hh$, and its Cayley transform $v_L$ is Schur (this is the standard Cayley map from $\Hh$ to $\D$; see, e.g., \cite[Ch.~I]{Duren1970}).
+
+The same theory shows that the endpoint function $E_L(z)=\Theta_1(L,z)+i\Theta_2(L,z)$ (with $\Theta(\cdot,z)=\Phi(\cdot,0;z)e_1$ on $[0,L]$) is Hermite-Biehler: $|E_L^{\!*}(z)|<|E_L(z)|$ on $\Hh$. Therefore $\upsilon_L:=E_L^{\!*}/E_L$ is Schur.
+\end{proof}
+
+\begin{remark}
+We distinguish between the Greek letter $\upsilon_L$ (upsilon), which denotes the endpoint ratio $E_L^{\!*}/E_L$, and the Latin letter $v_L$, which denotes the Cayley transform of the Weyl function $m_L$ at the left endpoint $s=0$. Both are Schur functions on $\Hh$, but they arise from different constructions.
+\end{remark}
+
+\medskip
+\noindent\textbf{Weyl function for the tail extension.}
+Throughout, $m_L$ (and hence $v_L$) denotes the Weyl-Titchmarsh function at the left endpoint $s=0$ for the half-line tail extension $H_{\mathrm{ext}}$; see Lemma~\ref{lem:HB-normalization} and Lemma~\ref{lem:Cayley}.
+
+\begin{lemma}[Finite-length Weyl formula (left endpoint)]
+\label{lem:Cayley}
+
+Assume $H$ is real, PSD with $\tr H\equiv1$ on $[0,\infty)$ and equals $\tfrac12 I$ on $[L,\infty)$. Let
+\[
+\Phi(L;z)=\begin{psmallmatrix}A^\Phi(z)&B^\Phi(z)\\ C^\Phi(z)&D^\Phi(z)\end{psmallmatrix}
+\]
+be the transfer matrix from $0$ to $L$. Then for $z\in\Hh$ the Weyl function at $s=0$ satisfies
+\[
+C^\Phi(z)+m_L(z)\,D^\Phi(z)=i\bigl(A^\Phi(z)+m_L(z)\,B^\Phi(z)\bigr),
+\]
+hence
+\[
+m_L(z)=(iA^\Phi(z)-C^\Phi(z))\,(D^\Phi(z)-iB^\Phi(z))^{-1}.
+\]
+\end{lemma}
+
+\begin{proof}
+Let $Y(\cdot,z)$ be the Weyl solution normalized by $Y(0,z)=(1,m_L(z))^\top$. Propagating to $s=L$ gives
+\[
+Y(L,z)=\Phi(L;z)\,(1,m_L(z))^\top
+=\bigl(A^\Phi+m_LB^\Phi,\ C^\Phi+m_LD^\Phi\bigr)^\top.
+\]
+On the tail $[L,\infty)$ with $H\equiv\tfrac12 I$, the $H$-square-integrable solution is proportional (at $s=L$) to the boundary vector $(1,i)^\top$: for $z\in\Hh$ the associated mode behaves like $e^{i z (s-L)/2}$ and decays like $e^{-(\Im z)(s-L)/2}$. Therefore $Y(L,z)$ must satisfy $Y_2(L,z)=iY_1(L,z)$, i.e.
+\[
+C^\Phi+m_LD^\Phi=i(A^\Phi+m_LB^\Phi).
+\]
+Rearranging gives $(D^\Phi-iB^\Phi)m_L=iA^\Phi-C^\Phi$ and yields the formula. Invertibility of $D^\Phi-iB^\Phi$ for $z\in\Hh$ follows from the limit-point property at $+\infty$; see \cite[Ch.~VI]{deBranges1968}.
+\end{proof}
+
+\subsection{Canonical tail, base normalization, and translation invariance}
+
+In all our constructions we attach the canonical tail
+\[
+H(s)\equiv\tfrac12 I\qquad\text{for }s\in[L,\infty).
+\]
+With this choice the fundamental solution of the base system $H\equiv\tfrac12 I$ is the rotation
+\[
+\Phi_0(s,t;z)
+=R\!\Big(-\frac{z}{2}(s-t)\Big),\qquad
+R(\theta):=\begin{psmallmatrix}
+\cos\theta & -\sin\theta \\
+\sin\theta & \cos\theta
+\end{psmallmatrix}.
+\]
+For the base system on $[0,L]$ we have the explicit endpoint HB function
+\begin{equation}\label{eq:E0L}
+E_{0,L}(z):=\cos\!\frac{zL}{2}-i\sin\!\frac{zL}{2}=e^{-izL/2},
+\end{equation}
+which fixes the base normalization \cite{deBranges1968,Romanov2014}.
+
+It is convenient to introduce the gauge-normalized endpoint function
+\[
+G_L(z):=e^{+izL/2}E_L(z).
+\]
+Since the gauge factor $e^{+izL/2}$ is independent of the Hamiltonian, parameter derivatives satisfy
+\[
+\partial_{\vartheta}G_L(z)=e^{+izL/2}\,\partial_{\vartheta}E_L(z)
+\]
+for every block parameter $\vartheta$. For the base system we have $G_L\equiv1$ by \eqref{eq:E0L}.
+
+\begin{lemma}[Tail-extension invariance and endpoint gauge normalization]
+\label{lem:translation-invariance}
+
+Assume $H(s)\equiv\tfrac12 I$ for $s\in[X,L]$. Let $E_L$ be the endpoint HB function at $L$, and let $E_X$ be the endpoint HB function of the truncated system on $[0,X]$. Then for all $z\in\C$,
+\[
+E_L(z)=e^{-iz(L-X)/2}\,E_X(z).
+\]
+Consequently, the gauge-normalized endpoint function is independent of $L$ beyond $X$:
+\[
+e^{+izL/2}E_L(z)=e^{+izX/2}E_X(z).
+\]
+\end{lemma}
+
+\begin{proof}
+On the terminal segment $(X,L)$ the transfer matrix is a rotation $\Phi(L,X;z)=R(-\tfrac{z}{2}(L-X))$ \cite{deBranges1968}. Let $\Theta(X,z)$ be the first column of $\Phi(X,0;z)$, so $\Theta(L,z)=\Phi(L,X;z)\Theta(X,z)$. Writing $\lambda_+:=[1\ \ i]$, the endpoint HB function is $E_L(z)=\lambda_+\Theta(L,z)$. Using the rotation identity $\lambda_+R(\theta)=e^{i\theta}\lambda_+$ (see Lemma~\ref{lem:elem} below), we obtain
+\[
+E_L(z)=\lambda_+R\!\Big(-\frac{z}{2}(L-X)\Big)\Theta(X,z)
+=e^{-iz(L-X)/2}\,\lambda_+\Theta(X,z)
+=e^{-iz(L-X)/2}E_X(z),
+\]
+and the second identity follows by multiplying both sides by $e^{+izL/2}$.
+\end{proof}
+
+\bigskip
+
+\section{Algebra and base gauge normalization}\label{sec:Algebra}
+
+This section collects the algebraic identities used in the linearization at the base Hamiltonian. We also make explicit the rotation structure of the base flow and the choice of gauge at the endpoint.
+
+\subsection{Rotation matrices and Pauli-type generators}
+
+We fix
+\[
+R(\theta)=
+\begin{psmallmatrix}
+\cos\theta & -\sin\theta\\
+\sin\theta & \cos\theta
+\end{psmallmatrix},\qquad
+J=
+\begin{psmallmatrix}
+0 & -1\\
+1 & 0
+\end{psmallmatrix},
+\]
+and the two Pauli-type matrices $\sigmathree$ and $\sigmaone$.
+We also use the row vector $\lambda_+=[1\ \ i]$ and the basis vector $e_1=\begin{psmallmatrix}1\\0\end{psmallmatrix}$ introduced in \eqref{eq:EL-def}.
+
+\begin{lemma}[Elementary identities]\label{lem:elem}
+For all $\theta\in\C$,
+\begin{align}
+\lambda_+R(\theta)&=e^{i\theta}\,\lambda_+,\label{eq:ellplus-rot}\\[2pt]
+R(\theta)e_1&=(\cos\theta,\ \sin\theta)^\top,\label{eq:R-e1}\\[2pt]
+J\sigmathree&=\sigmaone,\qquad J\sigmaone=-\sigmathree,\label{eq:J-Pauli}
+\end{align}
+and
+\begin{align}
+R(\theta)\,\sigmathree\,R(-\theta)
+&= \cos(2\theta)\,\sigmathree + \sin(2\theta)\,\sigmaone,
+\label{eq:rotate-sigma3}\\[2pt]
+R(\theta)\,\sigmaone\,R(-\theta)
+&= -\sin(2\theta)\,\sigmathree + \cos(2\theta)\,\sigmaone.
+\label{eq:rotate-sigma1}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+The identities \eqref{eq:ellplus-rot} and \eqref{eq:R-e1} are immediate from the definitions. For \eqref{eq:J-Pauli}, a direct matrix multiplication gives
+\[
+J\sigmathree=
+\begin{psmallmatrix}
+0&-1\\1&0
+\end{psmallmatrix}
+\begin{psmallmatrix}
+1&0\\0&-1
+\end{psmallmatrix}
+=
+\begin{psmallmatrix}
+0&1\\1&0
+\end{psmallmatrix}
+=\sigmaone,
+\]
+and
+\[
+J\sigmaone=
+\begin{psmallmatrix}
+0&-1\\1&0
+\end{psmallmatrix}
+\begin{psmallmatrix}
+0&1\\1&0
+\end{psmallmatrix}
+=
+\begin{psmallmatrix}
+-1&0\\0&1
+\end{psmallmatrix}
+=-\sigmathree.
+\]
+
+For \eqref{eq:rotate-sigma3}-\eqref{eq:rotate-sigma1}, a direct computation yields
+\[
+R(\theta)\sigmathree R(-\theta)
+=\begin{psmallmatrix}
+\cos2\theta & \sin2\theta\\
+\sin2\theta & -\cos2\theta
+\end{psmallmatrix}
+=\cos(2\theta)\sigmathree+\sin(2\theta)\sigmaone,
+\]
+and
+\[
+R(\theta)\sigmaone R(-\theta)
+=\begin{psmallmatrix}
+-\sin2\theta & \cos2\theta\\
+\cos2\theta & \sin2\theta
+\end{psmallmatrix}
+=-\sin(2\theta)\sigmathree+\cos(2\theta)\sigmaone.
+\]
+\end{proof}
+
+\subsection{Base flow and gauge}
+
+At the base Hamiltonian $H_{\mathrm{base}}\equiv\tfrac12 I$, the canonical system \eqref{eq:CS} reduces to
+\[
+JY'(s)=\frac{z}{2}Y(s),\qquad s\in[0,L],
+\]
+whose fundamental solution is
+\[
+\Phi_0(s,t;z)=R\!\Big(-\frac{z}{2}(s-t)\Big).
+\]
+In particular,
+\[
+\Phi_0(L,0;z)=R\!\Big(-\frac{zL}{2}\Big),\qquad
+E_{0,L}(z)=\lambda_+\,\Phi_0(L,0;z)\,e_1
+=e^{-izL/2},
+\]
+using \eqref{eq:ellplus-rot} and \eqref{eq:R-e1}. Hence the gauge-normalized base endpoint function satisfies $G_L\equiv1$.
+
+For a general Hamiltonian $H$ which coincides with $H_{\mathrm{base}}\equiv\tfrac12 I$ on $[L-\Lambda,L]$ for some fixed $\Lambda>0$, we will always work with the gauge-normalized endpoint function
+\[
+G_L(z)=e^{+izL/2}E_L(z),
+\]
+which is invariant under extensions of the canonical tail by Lemma~\ref{lem:translation-invariance}. This choice removes the trivial oscillation coming from the canonical tail and isolates the nontrivial dependence on the interior block parameters.
+
+\bigskip
+
+\section{Block discretization, parameter box, grid, and coordinates}\label{sec:blocks}
+
+We now discretize the interval $[0,L]$ into constant blocks, introduce a finite-dimensional parameter space for the Hamiltonian, and define a canonical sampling grid and block frequencies. The algebra from \Cref{sec:Algebra} will be used in \Cref{sec:kernel} to compute the linearization of $E_L$ at the base.
+
+\subsection{Constant-block Hamiltonians and a uniform positive-definiteness box}
+
+Fix an integer $N\ge1$ and set
+\[
+\ell:=\frac{L}{N},\qquad I_j:=[j\ell,(j+1)\ell)\ \text{for }j=0,1,\dots,N-2,\qquad I_{N-1}:=[(N-1)\ell,L].
+\]
+We restrict attention to Hamiltonians $H$ that are constant on each block $I_j$:
+\[
+H(s)\equiv H_j\quad\text{for }s\in I_j,
+\]
+with $H_j$ real symmetric, PSD, and $\tr H_j=1$. Thus each $H_j$ has the form
+\[
+H_j=
+\begin{psmallmatrix}
+a_j & c_j\\
+c_j & 1-a_j
+\end{psmallmatrix},\qquad
+a_j\in\R,\ c_j\in\R,\quad
+a_j(1-a_j)\ge c_j^2.
+\]
+It will be convenient to re-center these coordinates at the base by setting
+\[
+h_j:=a_j-\tfrac12,\qquad k_j:=c_j,
+\]
+so that \(H_j=\tfrac12 I+h_j\sigmathree+k_j\sigmaone\) as in \Cref{subsec:block-params}.
+
+\begin{remark}[Notation for spatial vs.\ block indices]
+Throughout the paper the continuous variable $s$ always denotes the spatial coordinate in the canonical system \eqref{eq:CS}, while subscripts such as $a_j$, $c_j$, $H_j$ index blocks in the partition of $[0,L]$. In particular, $s$ (spatial) and the block parameter labels do not interact, and we never use $s_j$ as a spatial grid point.
+\end{remark}
+
+\begin{remark}[Seam index $k$ vs.\ block parameter $k_j$]
+The seam/grid index $k$ (as in the grid points $u_k,x_k,z_k$ introduced in \Cref{subsec:canonical-grid} below) is unrelated to the block parameter $k_j$ appearing in $H_j=\tfrac12 I+h_j\sigmathree+k_j\sigmaone$. The former indexes sample nodes, while the latter indexes blocks.
+\end{remark}
+
+We fix a compact constraint set $\mathcal{B}$ of admissible block Hamiltonians, for example by requiring
+
+\begin{equation}\label{eq:PSD-box}
+\|H_j-\tfrac12 I\|\le\tfrac12-\varepsilon,\qquad
+H_j\succeq0,\ \tr H_j=1,
+\end{equation}
+
+for some $\varepsilon\in(0,\tfrac12)$. This constraint forces each $H_j$ to lie strictly inside the PSD cone: it is uniformly positive definite and uniformly separated from the degenerate boundary. We will refer to $\mathcal{B}$ as a \emph{uniform PD box}. For real symmetric trace-one matrices, the norm bound alone already forces eigenvalues into $[\varepsilon,1-\varepsilon]$; we keep the explicit PSD constraint in \eqref{eq:PSD-box} only for emphasis.
+
+\begin{remark}[PSD condition vs.\ uniform positive-definiteness]
+For a real symmetric $2\times2$ matrix
+\[
+H_j=
+\begin{psmallmatrix}
+a_j & c_j\\
+c_j & 1-a_j
+\end{psmallmatrix}
+\]
+with $\tr H_j=1$, positive semidefiniteness is equivalent to requiring $a_j\in[0,1]$ and
+\[
+a_j(1-a_j)\ge c_j^2,
+\]
+that is, $\det H_j\ge0$. In our setting we impose the stronger box condition \eqref{eq:PSD-box}, which implies that all eigenvalues of $H_j$ lie in $[\varepsilon,1-\varepsilon]$. Thus each $H_j$ is uniformly positive definite and uniformly separated from the degenerate boundary. Indeed, if $\|H_j-\tfrac12 I\|\le\tfrac12-\varepsilon$ then every eigenvalue $\lambda$ of $H_j$ satisfies $|\lambda-\tfrac12|\le\tfrac12-\varepsilon$, hence $\lambda\in[\varepsilon,1-\varepsilon]$.
+\end{remark}
+
+The base Hamiltonian $H_{\mathrm{base}}\equiv\tfrac12 I$ corresponds to $a_j=\tfrac12$ and $c_j=0$ on every block.
+
+We view
+\[
+\theta=(H_0,\dots,H_{N-1})\in\mathcal{B}^N
+\]
+as a point in a finite-dimensional parameter space. Later we will work with the real block variables $(h_j,k_j)$ introduced below (or any other uniformly bi-Lipschitz coordinates on $\mathcal{B}$); the precise choice will not matter for the linear theory.
+
+\subsection{Canonical sampling grid and odd block frequencies}\label{subsec:canonical-grid}
+
+On the frequency side it is convenient to work with the dimensionless variable
+\[
+u:=\frac{x\ell}{2},\qquad x\in\R.
+\]
+
+We will refer to $u=x\ell/2$ as the \emph{cell phase}; we sometimes write $u_{\mathrm{cell}}$ to emphasize this interpretation, but it is the same quantity.
+
+For the block-discretized system with $L=N\ell$ we fix once and for all an integer factor $P\ge1$ (we call $P\ge2$ \emph{oversampling}) and set
+\[
+M:=PN.
+\]
+The canonical sampling grid is
+\begin{equation}\label{eq:uk-grid}
+u_k:=\frac{\pi k}{N},\qquad k=0,1,\dots,M-1.
+\end{equation}
+
+\begin{remark}[Oversampling and periodicity]
+Note that $u_{k+N}=u_k+\pi$. Since our block frequencies $q_j=2j+1$ are odd, this implies $e^{iq_j u_{k+N}}=-e^{iq_j u_k}$. Thus the $M=PN$ grid stacks $P$ signed copies of an $N$-node exponential system; exact orthogonality still holds because inner products involve $q_j-q_{j'}\in2\Z$. We keep $P$ explicit because when $P\ge2$ it preserves an exact Gram identity while providing redundancy (useful for least-squares variants), and it cleanly separates the exponential matrix $F$ from the per-node unimodular normalization. The \emph{square} map used later is obtained by restricting to a single period of $N$ seam nodes (equivalently, taking $P=1$).
+\end{remark}
+
+We refer to \eqref{eq:uk-grid} as the \emph{seam grid} because later we evaluate our observables at the seam points $z_k=x_k+i\eta$ (i.e.\ along $\Im z=\eta$) inside a fixed height-strip rectangle (see \Cref{sec:strip-SU11}).
+
+The corresponding real abscissae are
+\[
+x_k:=\frac{2u_k}{\ell}=\frac{2\pi k}{N\ell}=\frac{2\pi k}{L},\qquad k=0,1,\dots,M-1.
+\]
+On this grid, the dimensionless phase across one block at the base Hamiltonian is
+\[
+u_{\mathrm{cell}}:=\frac{x\ell}{2},
+\]
+so at $x=x_k$ we have $u_{\mathrm{cell}}=u_k$. Because $q_j-q_{j'}=2(j-j')$ is always an even integer,
+\[
+e^{i(q_j-q_{j'})u_{k+N}}=e^{i(q_j-q_{j'})(u_k+\pi)}=e^{i(q_j-q_{j'})u_k},
+\]
+so the Gram terms are $N$-periodic in $k$. Therefore summing over $k=0,\dots,PN-1$ multiplies the single-period Gram matrix by $P$, yielding the exact identity $F^\ast F=PN\,I_N$ in Lemma~\ref{lem:F-orth}.
+
+\begin{remark}[Variant: sampling at height $\eta=0$]
+If one samples on the real axis ($\eta=0$), it can be convenient to discard grid points very close to the zeros of $\sin u$, since some unnormalized expressions carry factors of $1/\sin u$. Fix $0<\delta<\tfrac14$ and define the bulk index set
+\[
+\mathcal{K}_\delta
+:=\bigl\{k\in\{0,1,\dots,M-1\}:\operatorname{dist}(u_k,\pi\Z)\ge\delta\bigr\}.
+\]
+In the present paper we work at height $\eta>0$, where we normalize by $|\sin(u+i\alpha)|$ and the resulting diagonal weight is unimodular on \emph{all} seam nodes; accordingly, we keep the full grid $k=0,1,\dots,M-1$.
+\end{remark}
+
+We will use odd block frequencies
+
+\begin{equation}\label{eq:qj-odd}
+q_j:=2j+1,\qquad j=0,1,\dots,N-1.
+\end{equation}
+
+These are not an ad hoc choice: the base linearization of the gauge-normalized endpoint map produces exactly the phase $e^{iq_j u}$ for block $j$ (see Lemma~\ref{lem:one-packet}). They are also adapted to the grid \eqref{eq:uk-grid} in the sense that the family $\{e^{iq_j u_k}\}_{j=0}^{N-1}$ forms a discrete exponential system on the seam grid. The associated exponential matrix $F$ enjoys exact orthogonality on the full oversampled grid ($F^\ast F = PN\,I_N$, see Lemma~\ref{lem:F-orth}). For the moment we only need the explicit form of $q_j$.
+
+\subsection{Block parameters and complex coordinates}\label{subsec:block-params}
+
+On each block $I_j$ we choose two real parameters $(h_j,k_j)$ that parameterize $H_j$ within the uniform PD box $\mathcal{B}$. A convenient choice is
+\[
+H_j=\frac12 I + h_j\,\sigmathree + k_j\,\sigmaone,
+\]
+so that
+\[
+H_j=
+\begin{psmallmatrix}
+\frac12+h_j & k_j\\
+k_j & \frac12-h_j
+\end{psmallmatrix}.
+\]
+Since $\tr H_j=1$, positive semidefiniteness is equivalent to $\det H_j\ge0$, namely
+\[
+\det H_j=\Big(\frac12+h_j\Big)\Big(\frac12-h_j\Big)-k_j^2=\frac14-h_j^2-k_j^2\ge0,
+\]
+or equivalently $h_j^2+k_j^2\le \tfrac14$. On the fixed uniform PD box $\mathcal{B}$ we in addition have uniform bounds $|h_j|\le h_{\max}$ and $|k_j|\le k_{\max}$ (determined by $\mathcal{B}$). The base Hamiltonian corresponds to $(h_j,k_j)=(0,0)$ for all $j$.
+
+In the linear analysis it is convenient to combine $(h_j,k_j)$ into a single complex coordinate
+
+\begin{equation}\label{eq:pj-def}
+p_j:=k_j+i h_j,\qquad j=0,1,\dots,N-1.
+\end{equation}
+
+The mapping $(h_j,k_j)\mapsto p_j$ is a real-linear isomorphism on each block, and conversely
+\[
+h_j=\Im p_j,\qquad k_j=\Re p_j.
+\]
+We will see in \Cref{sec:kernel} that the derivatives $\partial_{p_j}^{\mathrm{dir}}E_L$ at the base Hamiltonian give the cleanest form of the exponential packet structure.
+
+\medskip
+\noindent\textbf{Notation.}
+Throughout, we use the complex \emph{directional} derivative
+\[
+\partial_{p_j}^{\mathrm{dir}}
+:=\partial_{k_j}+i\,\partial_{h_j},
+\]
+which is a convenient complex-linear combination of real derivatives on each block. We do not interpret $\partial_{p_j}^{\mathrm{dir}}$ as a Wirtinger derivative.
+
+\medskip
+\noindent\textbf{Pairing convention (no Wirtinger calculus).}
+We use the complex directional combinations
+\[
+\partial_{p_j}^{\mathrm{dir}}:=\partial_{k_j}+i\,\partial_{h_j},
+\qquad
+\partial_{\bar p_j}^{\mathrm{dir}}:=\partial_{k_j}-i\,\partial_{h_j},
+\]
+purely as convenient real-linear combinations of partial derivatives on each block. The real differential always satisfies, for any scalar-valued observable $\mathcal{O}$,
+\[
+D\mathcal{O}(\theta_0)\,(\delta k,\delta h)
+=\sum_{j=0}^{N-1}\delta k_j\,\partial_{k_j}\mathcal{O}(\theta_0)
++\sum_{j=0}^{N-1}\delta h_j\,\partial_{h_j}\mathcal{O}(\theta_0),
+\]
+and this can be repackaged exactly as
+\[
+D\mathcal{O}(\theta_0)\,(\delta k,\delta h)
+=\frac12\sum_{j=0}^{N-1}(\delta k_j-i\,\delta h_j)\,\partial_{p_j}^{\mathrm{dir}}\mathcal{O}(\theta_0)
++\frac12\sum_{j=0}^{N-1}(\delta k_j+i\,\delta h_j)\,\partial_{\bar p_j}^{\mathrm{dir}}\mathcal{O}(\theta_0).
+\]
+Accordingly, when we form a "complex Jacobian" below, we mean the matrix of directional derivatives $\bigl(\partial_{p_j}^{\mathrm{dir}}(\cdot)\bigr)_j$. For the specific seam observables used in this paper, the base relations satisfy $\partial_{h_j}f_k=-i\,\partial_{k_j}f_k$ (see Lemma~\ref{lem:packet-amplitudes} below), hence $\partial_{\bar p_j}^{\mathrm{dir}}f_k=(\partial_{k_j}-i\partial_{h_j})f_k=0$ at $H_{\mathrm{base}}$. Therefore the first-order variation depends only on the increment combination $\delta k_j-i\,\delta h_j$ at the base.
+
+\begin{remark}[Analytic dependence on block parameters]
+The canonical system \eqref{eq:CS} with block-constant Hamiltonian $H$ depends analytically on the matrix entries of each $H_j$, and the endpoint function $E_L(z;H)$ is obtained by evaluating the corresponding transfer matrix at $s=L$. In particular, for each fixed $z$ the map
+\[
+\theta=(h_j,k_j)_{j=0}^{N-1}\longmapsto E_L(z;H(\theta))
+\]
+is real-analytic in the real block parameters (see, e.g., \cite[Ch.~1]{CoddingtonLevinson1955}). After complexification, the complex directional derivatives $\partial_{p_j}^{\mathrm{dir}}$ are well-defined and yield the cleanest packet formulas. The same applies to the height-normalized samples $f(H;\eta)$, so the complex Jacobian $J^{(\eta)}_\C$ below is formed from these complex directional derivatives.
+\end{remark}
+
+\subsection{Endpoint map along the grid}
+
+For a given Hamiltonian $H$ we denote by $E_L(z)$ the endpoint Hermite-Biehler function normalized as in \eqref{eq:EL-def}, and by $G_L(z)=e^{+izL/2}E_L(z)$ its gauge-normalized version. On the grid $x_k=2u_k/\ell$ from \eqref{eq:uk-grid} we form the samples
+\[
+E_L(x_k),\qquad G_L(x_k)=e^{+ix_kL/2}E_L(x_k),\qquad k=0,1,\dots,M-1.
+\]
+At the base Hamiltonian $H_{\mathrm{base}}\equiv\tfrac12 I$ we have $E_{0,L}(x_k)=e^{-ix_kL/2}$ and hence $G_L(x_k)\equiv1$ for all~$k$.
+
+The dependence of $E_L(x_k)$ and $G_L(x_k)$ on the block parameters $\theta=(h_j,k_j)_j$ will be studied via the Jacobian
+\[
+\frac{\partial E_L(x_k)}{\partial(h_j,k_j)}
+\quad\text{or}\quad
+\partial_{p_j}^{\mathrm{dir}} G_L(x_k)
+\]
+at the base point. The next section computes this Jacobian by Duhamel’s formula and identifies the resulting exponential packet structure.
+
+\bigskip
+
+\section{Exact kernel integral on the real axis and packet structure}
+\label{sec:kernel}
+
+We now linearize the endpoint function $E_L(x)$ at the base Hamiltonian $H_{\mathrm{base}}\equiv\tfrac12 I$ with respect to a single block parameter. The main outcome is that each block contributes a single complex exponential packet $\sin u_{\mathrm{cell}}\,e^{iq_j u_{\mathrm{cell}}}$ on the scale of the cell phase $u_{\mathrm{cell}}=x\ell/2$.
+
+\subsection{Duhamel formula and the block kernel at the base}
+
+Fix a Hamiltonian $H$ which is constant on each block $I_j$, and write $\Phi(L,0;x)$ for the transfer matrix at real spectral parameter $x\in\R$.
+
+Let $\vartheta$ be one of the real parameters $h_j$ or $k_j$ on a fixed block $I_j$. We assume that the dependence $H=H(\vartheta)$ is smooth in a neighbourhood of the base value $\vartheta=0$, and we denote by
+\[
+\partial_\vartheta H_j
+=\left.\frac{\partial H_j}{\partial\vartheta}\right|_{\vartheta=0}
+=a_\vartheta\,\sigmathree+b_\vartheta\,\sigmaone,
+\qquad a_\vartheta,b_\vartheta\in\R,
+\]
+the corresponding directional derivative at the base. (At the base $H_j=\tfrac12 I$, so the linear part of the perturbation is a real trace-free matrix and can always be written in the form $a_\vartheta\sigmathree+b_\vartheta\sigmaone$.)
+
+At the base Hamiltonian $H_{\mathrm{base}}\equiv\tfrac12 I$ the canonical system is
+\[
+JY'(s)=\frac{x}{2}Y(s),\qquad \omega:=\frac{x}{2},
+\]
+with fundamental solution
+\[
+\Phi_0(s,t;x)=R\bigl(-\omega(s-t)\bigr).
+\]
+We will compute the derivative of $\Phi(L,0;x)$ at $H_{\mathrm{base}}$ in the direction $\partial_\vartheta H_j$.
+
+Let $A(s):=-xJH(s)$ be the coefficient matrix in $Y'=A(s)Y$. A standard variation-of-parameters (Duhamel) argument for $Y'=M(s)Y$ with respect to $H$ yields (see, e.g., \cite[Ch.~1]{CoddingtonLevinson1955})
+
+\begin{align}
+\partial_\vartheta\Phi(L,0;x)\Big|_{H_{\mathrm{base}}}
+&=\int_0^L \Phi_0(L,s;x)\,\partial_\vartheta A(s)\,\Phi_0(s,0;x)\,ds
+\nonumber\\
+&= -x\int_0^L \Phi_0(L,s;x)\,J\,\partial_\vartheta H(s)\,\Phi_0(s,0;x)\,ds.
+\label{eq:duhamel-full}
+\end{align}
+
+Since $\partial_\vartheta H(s)$ is supported on $I_j$, we may restrict the integral to $I_j$:
+
+\begin{align}
+\partial_\vartheta\Phi(L,0;x)\Big|_{H_{\mathrm{base}}}
+&= -x\int_{j\ell}^{(j+1)\ell}
+\Phi_0(L,s;x)\,J\,\partial_\vartheta H_j\,\Phi_0(s,0;x)\,ds.
+\label{eq:duhamel-block1}
+\end{align}
+
+Using the group property $\Phi_0(L,s;x)=\Phi_0(L,(j+1)\ell;x)\Phi_0((j+1)\ell,s;x)$ and $\Phi_0(s,0;x)=\Phi_0(s,j\ell;x)\Phi_0(j\ell,0;x)$, and changing variables $s=j\ell+t$ with $t\in[0,\ell]$, we obtain
+
+\begin{equation}\label{eq:duhamel-block2}
+\partial_\vartheta\Phi(L,0;x)\Big|_{H_{\mathrm{base}}}
+=
+\Phi_0\bigl(L,(j+1)\ell;x\bigr)\,K_\vartheta(x)\,\Phi_0(j\ell,0;x),
+\end{equation}
+
+where
+\begin{equation}\label{eq:Kdef}
+K_\vartheta(x)
+:=
+-x\int_0^\ell
+R\bigl(-\omega(\ell-t)\bigr)\,J\,\partial_\vartheta H_j\,R(-\omega t)\,dt.
+\end{equation}
+
+We call $K_\vartheta(x)$ the \emph{block kernel} associated with the variation $\partial_\vartheta H_j$.
+
+\subsection{Exact kernel computation at the base}
+
+We now compute the integral defining $K_\vartheta(x)$ explicitly.
+
+\begin{lemma}[Kernel integral for real spectral parameter]\label{lem:Kexact}
+Let $u_{\mathrm{cell}}:=\omega\ell=x\ell/2$. With $\partial_\vartheta H_j=a_\vartheta\sigmathree+b_\vartheta\sigmaone$, we have for all real $x$,
+\[
+K_\vartheta(x)
+=
+2\sin(u_{\mathrm{cell}})\,
+\bigl(b_\vartheta\sigmathree-a_\vartheta\sigmaone\bigr).
+\]
+\end{lemma}
+
+\begin{proof}
+Write $a:=a_\vartheta$, $b:=b_\vartheta$ and $dH:=a\sigmathree+b\sigmaone$. Set $\omega:=x/2$ and abbreviate
+\[
+R_1(t):=R\bigl(-\omega(\ell-t)\bigr),\qquad R_2(t):=R(-\omega t).
+\]
+Then
+\[
+K_\vartheta(x)=-x\int_0^\ell R_1(t)\,JdH\,R_2(t)\,dt.
+\]
+Using $J\sigmathree=\sigmaone$ and $J\sigmaone=-\sigmathree$ from Lemma~\ref{lem:elem}, we get
+\[
+JdH=a\sigmaone-b\sigmathree.
+\]
+Next, factor $R_1(t)=R(-\omega\ell)\,R(\omega t)$ and write the integrand as
+\[
+R_1(t)\,JdH\,R_2(t)=R(-\omega\ell)\,\Big(R(\omega t)(a\sigmaone-b\sigmathree)R(-\omega t)\Big).
+\]
+Using Lemma~\ref{lem:elem},
+\[
+R(\omega t)\sigmathree R(-\omega t)=\cos(2\omega t)\sigmathree+\sin(2\omega t)\sigmaone,
+\]
+\[
+R(\omega t)\sigmaone R(-\omega t)=-\sin(2\omega t)\sigmathree+\cos(2\omega t)\sigmaone.
+\]
+Therefore
+
+\begin{align*}
+R(\omega t)(a\sigmaone - b\sigmathree)R(-\omega t)
+&= a\Bigl(-\sin(2\omega t)\,\sigmathree
+          + \cos(2\omega t)\,\sigmaone\Bigr)\\
+&\quad
+ - b\Bigl(\cos(2\omega t)\,\sigmathree
+          + \sin(2\omega t)\,\sigmaone\Bigr)\\[4pt]
+&= \Bigl(-a\sin(2\omega t) - b\cos(2\omega t)\Bigr)\sigmathree\\
+&\quad
+ + \Bigl(a\cos(2\omega t) - b\sin(2\omega t)\Bigr)\sigmaone.
+\end{align*}
+
+Integrating term-by-term over $t\in[0,\ell]$ gives, for $\omega\neq0$,
+\[
+\int_0^\ell \bigl(-a\sin(2\omega t)-b\cos(2\omega t)\bigr)\,dt
+=\frac{a(\cos(2\omega\ell)-1)-b\sin(2\omega\ell)}{2\omega},
+\]
+\[
+\int_0^\ell \bigl(a\cos(2\omega t)-b\sin(2\omega t)\bigr)\,dt
+=\frac{a\sin(2\omega\ell)+b(\cos(2\omega\ell)-1)}{2\omega}.
+\]
+Thus
+\[
+\int_0^\ell R_1(t)\,JdH\,R_2(t)\,dt
+=R(-\omega\ell)\,\frac{1}{2\omega}\Big(\Xi_3\,\sigmathree+\Xi_1\,\sigmaone\Big),
+\]
+with
+\[
+\Xi_3=a(\cos(2\omega\ell)-1)-b\sin(2\omega\ell),\qquad
+\Xi_1=a\sin(2\omega\ell)+b(\cos(2\omega\ell)-1).
+\]
+To simplify, write $s:=\sin(\omega\ell)$ and $c:=\cos(\omega\ell)$. Then
+\[
+\Xi_3=a(\cos(2\omega\ell)-1)-b\sin(2\omega\ell)=-2as^2-2bsc,\qquad
+\Xi_1=a\sin(2\omega\ell)+b(\cos(2\omega\ell)-1)=2asc-2bs^2.
+\]
+Using $R(-\omega\ell)=\begin{psmallmatrix}c&s\\-s&c\end{psmallmatrix}$ and
+$\sigmathree=\begin{psmallmatrix}1&0\\0&-1\end{psmallmatrix}$, $\sigmaone=\begin{psmallmatrix}0&1\\1&0\end{psmallmatrix}$, a direct multiplication gives
+\[
+R(-\omega\ell)\,(\Xi_3\sigmathree+\Xi_1\sigmaone)=-2s\,(b\sigmathree-a\sigmaone).
+\]
+Therefore
+\[
+\int_0^\ell R_1(t)\,JdH\,R_2(t)\,dt
+=\frac{\sin(\omega\ell)}{\omega}\,\bigl(-b\sigmathree+a\sigmaone\bigr),
+\]
+and multiplying by $-x=-2\omega$ yields
+\[
+K_\vartheta(x)=2\sin(\omega\ell)\,\bigl(b\sigmathree-a\sigmaone\bigr)
+=2\sin(u_{\mathrm{cell}})\,\bigl(b_\vartheta\sigmathree-a_\vartheta\sigmaone\bigr).
+\]
+The case $x=0$ follows by continuity from $\sin(\omega\ell)\sim\omega\ell$ as $\omega\to0$.
+\end{proof}
+
+\subsection{One complex packet per block}
+
+We now test the variation of $\Phi(L,0;x)$ against the endpoint functionals $\lambda_+$ and $e_1$.
+
+\begin{lemma}[One complex packet per block]\label{lem:one-packet}
+Let $u_{\mathrm{cell}}=x\ell/2$. Fix a block $j$ and a real parameter $\vartheta\in\{h_j,k_j\}$. Write the corresponding directional derivative at the base as
+\[
+\partial_\vartheta H_j = a_\vartheta\,\sigmathree + b_\vartheta\,\sigmaone,
+\]
+with $(a_\vartheta,b_\vartheta)\in\R^2\setminus\{(0,0)\}$. Then there exists a constant $C_\vartheta\in\C\setminus\{0\}$, depending only on $(a_\vartheta,b_\vartheta)$, such that for all real $x$,
+\[
+e^{+ixL/2}\,\partial_\vartheta E_L(x)\Big|_{H_{\mathrm{base}}}
+=
+C_\vartheta\,\sin(u_{\mathrm{cell}})\,e^{iq_j u_{\mathrm{cell}}},
+\qquad q_j:=2j+1.
+\]
+In fact, one can take $C_\vartheta=2\,(b_\vartheta-i a_\vartheta)$.
+\end{lemma}
+
+\begin{proof}
+From \eqref{eq:duhamel-block2} we have
+\[
+\partial_\vartheta\Phi(L,0;x)\Big|_{H_{\mathrm{base}}}
+=
+\Phi_0\bigl(L,(j+1)\ell;x\bigr)\,K_\vartheta(x)\,\Phi_0(j\ell,0;x),
+\]
+with $K_\vartheta(x)$ given by Lemma~\ref{lem:Kexact}. Testing against $\lambda_+$ on the left and $e_1$ on the right, and recalling that $E_L(x)=\lambda_+\Phi(L,0;x)e_1$, we obtain
+\begin{align*}
+\partial_\vartheta E_L(x)\Big|_{H_{\mathrm{base}}}
+&=\lambda_+\Phi_0\bigl(L,(j+1)\ell;x\bigr)\,K_\vartheta(x)\,\Phi_0(j\ell,0;x)e_1\\
+&=\lambda_+R\bigl(-\omega(L-(j+1)\ell)\bigr)\,
+K_\vartheta(x)\,
+R(-\omega j\ell)\,e_1,
+\end{align*}
+where $\omega:=x/2$. By Lemma~\ref{lem:elem},
+\[
+\lambda_+R(-\theta)=e^{-i\theta}\lambda_+,\qquad
+R(-\omega j\ell)e_1=(\cos(j u_{\mathrm{cell}}),-\sin(j u_{\mathrm{cell}}))^\top.
+\]
+Using Lemma~\ref{lem:Kexact}, we may write
+\[
+K_\vartheta(x)
+=
+2\sin(u_{\mathrm{cell}})\,
+\bigl(b_\vartheta\sigmathree-a_\vartheta\sigmaone\bigr).
+\]
+Let $c_\phi:=\cos(j u_{\mathrm{cell}})$ and $s_\phi:=\sin(j u_{\mathrm{cell}})$. Then
+\[
+\sigmathree(c_\phi,-s_\phi)^\top=(c_\phi,s_\phi)^\top,\qquad
+\sigmaone(c_\phi,-s_\phi)^\top=(-s_\phi,c_\phi)^\top,
+\]
+so
+\[
+\bigl(b_\vartheta\sigmathree-a_\vartheta\sigmaone\bigr)(c_\phi,-s_\phi)^\top
+=\bigl(b_\vartheta c_\phi+a_\vartheta s_\phi,\ b_\vartheta s_\phi-a_\vartheta c_\phi\bigr)^\top.
+\]
+Thus
+\[
+K_\vartheta(x)R(-\omega j\ell)e_1
+=2\sin(u_{\mathrm{cell}})\,
+\bigl(b_\vartheta c_\phi+a_\vartheta s_\phi,\ b_\vartheta s_\phi-a_\vartheta c_\phi\bigr)^\top,
+\]
+and
+\[
+\lambda_+K_\vartheta(x)R(-\omega j\ell)e_1
+=2\sin(u_{\mathrm{cell}})\,\bigl[(b_\vartheta c_\phi+a_\vartheta s_\phi)+i(b_\vartheta s_\phi-a_\vartheta c_\phi)\bigr].
+\]
+Using $c_\phi+i s_\phi=e^{ij u_{\mathrm{cell}}}$ and $s_\phi-i c_\phi=-i e^{ij u_{\mathrm{cell}}}$, we obtain
+\[
+(b_\vartheta c_\phi+a_\vartheta s_\phi)+i(b_\vartheta s_\phi-a_\vartheta c_\phi)
+=(b_\vartheta-i a_\vartheta)\,e^{ij u_{\mathrm{cell}}},
+\]
+so
+\[
+\lambda_+K_\vartheta(x)R(-\omega j\ell)e_1
+=2(b_\vartheta-i a_\vartheta)\,\sin(u_{\mathrm{cell}})\,e^{ij u_{\mathrm{cell}}}.
+\]
+Putting everything together,
+\[
+\partial_\vartheta E_L(x)\Big|_{H_{\mathrm{base}}}
+=
+2(b_\vartheta-i a_\vartheta)\,\sin(u_{\mathrm{cell}})\,
+e^{-i\omega(L-(j+1)\ell)}e^{ij u_{\mathrm{cell}}}.
+\]
+Since $L=N\ell$ and $\omega=x/2$, we have
+\[
+e^{+ixL/2}\,e^{-i\omega(L-(j+1)\ell)}
+=
+e^{i\omega L}e^{-i\omega(L-(j+1)\ell)}
+=
+e^{i\omega(j+1)\ell}
+=
+e^{i(j+1)u_{\mathrm{cell}}},
+\]
+and hence
+\[
+e^{+ixL/2}\,\partial_\vartheta E_L(x)\Big|_{H_{\mathrm{base}}}
+=
+2(b_\vartheta-i a_\vartheta)\,\sin(u_{\mathrm{cell}})\,e^{i(2j+1)u_{\mathrm{cell}}}.
+\]
+Thus the lemma holds with $C_\vartheta=2(b_\vartheta-i a_\vartheta)\neq0$.
+\end{proof}
+
+Thus each block $j$ contributes a single complex packet
+\[
+\psi_j(u):=\sin u\,e^{iq_j u},
+\qquad q_j=2j+1,
+\]
+in the linearization of the gauge-normalized endpoint function $G_L=e^{+izL/2}E_L$ at the base.
+
+\subsection{Two real packets per block}
+
+We now pass from the real parameters $(h_j,k_j)$ to the complex coordinate $p_j$ defined in \eqref{eq:pj-def} and then back to a pair of real coordinates adapted to the real and imaginary parts of the packet $\psi_j$.
+
+Define
+\[
+\psi_j(u):=\sin u\,e^{iq_j u},\qquad
+g_j^{(1)}(u):=\sin u\cos(q_j u),\qquad
+g_j^{(2)}(u):=\sin u\sin(q_j u),
+\]
+so that $\psi_j=g_j^{(1)}+i g_j^{(2)}$.
+
+\begin{lemma}[Two real packets per block]\label{lem:two-real-packets}
+Fix a block $j$ and define
+\[
+\psi_j(u) := \sin u\, e^{iq_j u},
+\]
+
+\[
+g_j^{(1)}(u) := \Re\psi_j(u)
+              = \sin u \cos(q_j u),
+\]
+
+\[
+g_j^{(2)}(u) := \Im\psi_j(u)
+              = \sin u \sin(q_j u).
+\]
+
+where $q_j:=2j+1$. In the block parametrization
+\[
+H_j=\frac12 I + h_j\,\sigmathree + k_j\,\sigmaone,\qquad p_j:=k_j+i h_j,
+\]
+at the base Hamiltonian $H_{\mathrm{base}}\equiv\tfrac12 I$ we have, for every real $x$ with
+$u_{\mathrm{cell}}=\tfrac{x\ell}{2}$,
+\[
+e^{+ixL/2}\,\partial_{p_j}^{\mathrm{dir}}E_L(x)\Big|_{H_{\mathrm{base}}}
+=4\,\psi_j(u_{\mathrm{cell}}).
+\]
+In particular,
+\[
+\Re\!\left(e^{+ixL/2}\,\partial_{p_j}^{\mathrm{dir}}E_L(x)\Big|_{H_{\mathrm{base}}}\right)=4\,g_j^{(1)}(u_{\mathrm{cell}}),
+\qquad
+\Im\!\left(e^{+ixL/2}\,\partial_{p_j}^{\mathrm{dir}}E_L(x)\Big|_{H_{\mathrm{base}}}\right)=4\,g_j^{(2)}(u_{\mathrm{cell}}).
+\]
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:one-packet}, for a coordinate direction $\vartheta$ on block $j$ with
+$\partial_\vartheta H_j=a_\vartheta\sigmathree+b_\vartheta\sigmaone$, we have
+\[
+e^{+ixL/2}\,\partial_\vartheta E_L(x)\Big|_{H_{\mathrm{base}}}
+=2(b_\vartheta-i a_\vartheta)\,\sin(u_{\mathrm{cell}})\,e^{iq_j u_{\mathrm{cell}}}.
+\]
+For $\vartheta=k_j$ we have $(a_\vartheta,b_\vartheta)=(0,1)$, hence
+\[
+e^{+ixL/2}\,\partial_{k_j}E_L(x)\Big|_{H_{\mathrm{base}}}
+=2\,\sin(u_{\mathrm{cell}})\,e^{iq_j u_{\mathrm{cell}}}.
+\]
+For $\vartheta=h_j$ we have $(a_\vartheta,b_\vartheta)=(1,0)$, hence
+\[
+e^{+ixL/2}\,\partial_{h_j}E_L(x)\Big|_{H_{\mathrm{base}}}
+=-2i\,\sin(u_{\mathrm{cell}})\,e^{iq_j u_{\mathrm{cell}}}.
+\]
+Using $\partial_{p_j}^{\mathrm{dir}}=\partial_{k_j}+i\,\partial_{h_j}$ gives
+\[
+e^{+ixL/2}\,\partial_{p_j}^{\mathrm{dir}}E_L(x)\Big|_{H_{\mathrm{base}}}
+=\bigl(2+i(-2i)\bigr)\sin(u_{\mathrm{cell}})\,e^{iq_j u_{\mathrm{cell}}}
+=4\,\psi_j(u_{\mathrm{cell}}),
+\]
+and taking real and imaginary parts yields the final identities.
+\end{proof}
+
+In summary, at the base Hamiltonian $H_{\mathrm{base}}\equiv\tfrac12 I$ the linearization of the gauge-normalized endpoint map
+\[
+\theta\mapsto G_L(x_k)=e^{+ix_kL/2}E_L(x_k)
+\]
+on the sampling grid $x_k=2u_k/\ell$ decomposes into $N$ independent blocks, each of which is spanned by two real packets $g_j^{(1)}(u_k)$ and $g_j^{(2)}(u_k)$ associated with the single complex packet $\psi_j(u_k)=\sin u_k\,e^{iq_j u_k}$. Later we will combine this packet structure with an exponential frame estimate on the grid $\{u_k\}$ to obtain quantitative conditioning bounds for the Jacobian of a square seam map (introduced in Section~\ref{sec:real-square}) restricted to suitable subsets of the grid.
+
+\bigskip
+
+\section{Height parameter, complex packets, and intrinsic amplitude}\label{sec:height-packets}
+
+In this section we extend the packet structure from real spectral parameter $x\in\R$ to complex spectral parameters $z=x+i\eta$ with $\eta>0$. The key point is that the Duhamel representation from \Cref{sec:kernel} is holomorphic in $z$, so the one-packet structure from Lemma~\ref{lem:one-packet} continues to hold at height $\eta$, with the real cell phase $u_{\mathrm{cell}}=x\ell/2$ replaced by its complex counterpart $u=z\ell/2$.
+
+We then define an intrinsic amplitude, which on the seam $u=u_{\mathrm{cell}}+i\alpha$ is naturally taken as $|\sin(u)|=|\sin(u_{\mathrm{cell}}+i\alpha)|$, and introduce height-normalized samples of the endpoint function along the grid.
+
+\subsection{Complexification of the packet formula}
+
+Recall from \eqref{eq:duhamel-block2}-\eqref{eq:Kdef} that at the base Hamiltonian $H_{\mathrm{base}}\equiv\tfrac12 I$ the derivative of the transfer matrix in the direction $\partial_\vartheta H_j$ can be written as
+\[
+\partial_\vartheta\Phi(L,0;z)\Big|_{H_{\mathrm{base}}}
+=
+\Phi_0\bigl(L,(j+1)\ell;z\bigr)\,K_\vartheta(z)\,\Phi_0(j\ell,0;z),
+\]
+where
+\[
+K_\vartheta(z)
+:=
+-z\int_0^\ell
+R\bigl(-\tfrac{z}{2}(\ell-t)\bigr)\,J\,\partial_\vartheta H_j\,
+R\bigl(-\tfrac{z}{2}t\bigr)\,dt.
+\]
+For real $x$ this reduces to \eqref{eq:duhamel-block2}-\eqref{eq:Kdef}; for general $z\in\C$ the integral is a holomorphic function of $z$, since the integrand is entire in $z$ and absolutely integrable in $t\in[0,\ell]$.
+
+At the base we have
+\[
+\Phi_0(s,t;z)=R\!\Big(-\frac{z}{2}(s-t)\Big),
+\]
+so the same computation as in Lemma~\ref{lem:Kexact} gives the following extension.
+
+\begin{lemma}[Kernel integral for complex $z$]\label{lem:Kexact-complex}
+
+Let $u:=\tfrac{z\ell}{2}$. With $\partial_\vartheta H_j=a_\vartheta\sigmathree+b_\vartheta\sigmaone$, we have for all $z\in\C$,
+\[
+K_\vartheta(z)
+=
+2\sin(u)\,\bigl(b_\vartheta\sigmathree-a_\vartheta\sigmaone\bigr).
+\]
+\end{lemma}
+
+\begin{proof}
+The proof of Lemma~\ref{lem:Kexact} uses only the identities from Lemma~\ref{lem:elem} and the group property of $R(\cdot)$, which hold for complex arguments as well. Replacing $x$ by $z$ and $\omega$ by $z/2$ throughout, the same computation yields
+\[
+K_\vartheta(z)
+=
+2\sin\Big(\frac{z\ell}{2}\Big)\,
+\bigl(b_\vartheta\sigmathree-a_\vartheta\sigmaone\bigr),
+\]
+for all $z\in\C$.
+\end{proof}
+
+Testing this against $\lambda_+$ and $e_1$ gives a complex extension of Lemma~\ref{lem:one-packet}.
+
+\begin{lemma}[Complex packet per block at height $\eta$]
+\label{lem:one-packet-complex}
+
+Let $z=x+i\eta$ with $\eta\in\R$, and set $u:=\tfrac{z\ell}{2}$. Fix a block $j$ and a real parameter $\vartheta\in\{h_j,k_j\}$. Then there exists a constant $C_\vartheta\in\C\setminus\{0\}$, depending only on $\partial_\vartheta H_j$, such that for all $z\in\C$,
+\[
+e^{+izL/2}\,\partial_\vartheta E_L(z)\Big|_{H_{\mathrm{base}}}
+=
+C_\vartheta\,\sin(u)\,e^{iq_j u},
+\qquad q_j:=2j+1.
+\]
+\end{lemma}
+
+\begin{proof}
+The derivation of Lemma~\ref{lem:one-packet} goes through verbatim with $x$ replaced by $z\in\C$: we use the representation
+
+\begin{align*}
+\partial_\vartheta E_L(z)\Big|_{H_{\mathrm{base}}}
+&=\lambda_+\Phi_0\bigl(L,(j+1)\ell;z\bigr)\,
+K_\vartheta(z)\,\Phi_0(j\ell,0;z)e_1\\
+&=\lambda_+R\bigl(-\tfrac{z}{2}(L-(j+1)\ell)\bigr)\,
+K_\vartheta(z)\,
+R\bigl(-\tfrac{z}{2}j\ell\bigr)e_1,
+\end{align*}
+
+and then apply Lemma~\ref{lem:elem} together with Lemma~\ref{lem:Kexact-complex}. All identities involved are polynomial in $(\cos(\cdot),\sin(\cdot))$ and hence extend holomorphically in $z$, so we obtain
+\[
+e^{+izL/2}\,\partial_\vartheta E_L(z)\Big|_{H_{\mathrm{base}}}
+=
+C_\vartheta\,\sin\Big(\frac{z\ell}{2}\Big)\,
+e^{i(2j+1)\frac{z\ell}{2}}
+\]
+for all $z\in\C$, as claimed.
+\end{proof}
+
+Writing $z=x+i\eta$ and
+\[
+u=\frac{z\ell}{2}=u_{\mathrm{cell}}+i\alpha,\qquad
+u_{\mathrm{cell}}:=\frac{x\ell}{2},\quad
+\alpha:=\frac{\eta\ell}{2},
+\]
+we see that at height $\eta>0$ the packet picks up the factor $e^{-q_j\alpha}$ in the exponential and a modified amplitude $\sin(u_{\mathrm{cell}}+i\alpha)$.
+
+\subsection{Intrinsic amplitude at height}
+\label{subsec:intrinsic-amplitude}
+
+In this one-packet setting the natural "intrinsic amplitude" for the block packets is simply the modulus of $\sin(u)$ at the relevant height. We record a few basic properties.
+
+\begin{definition}[Intrinsic amplitude]\label{def:Eamp}
+For $\alpha\in\R$ and $u\in\R$ we define
+\[
+E_{\mathrm{amp}}(\alpha,u)
+:=\bigl|\sin(u+i\alpha)\bigr|.
+\]
+\end{definition}
+
+A straightforward computation yields an explicit formula.
+
+\begin{lemma}[Explicit formula and uniform bounds]\label{lem:Eamp-explicit}
+
+For all $\alpha\in\R$ and $u\in\R$,
+\[
+E_{\mathrm{amp}}(\alpha,u)^2
+=\bigl|\sin(u+i\alpha)\bigr|^2
+=\sin^2 u+\sinh^2\alpha.
+\]
+In particular, for every $\alpha>0$ and all $u\in\R$,
+\[
+\sinh\alpha\ \le\ E_{\mathrm{amp}}(\alpha,u)\ \le\ \cosh\alpha,
+\qquad\text{and}\qquad
+E_{\mathrm{amp}}(\alpha,u)\ge|\sin u|.
+\]
+\end{lemma}
+
+\begin{proof}
+We have
+\[
+\sin(u+i\alpha)=\sin u\cosh\alpha+i\cos u\sinh\alpha,
+\]
+so
+\[
+|\sin(u+i\alpha)|^2=\sin^2 u\,\cosh^2\alpha+\cos^2 u\,\sinh^2\alpha
+=\sin^2 u+(\sin^2 u+\cos^2 u)\sinh^2\alpha
+=\sin^2 u+\sinh^2\alpha.
+\]
+The bounds follow immediately: $\sin^2 u\in[0,1]$ gives $\sinh^2\alpha\le E_{\mathrm{amp}}(\alpha,u)^2\le 1+\sinh^2\alpha=\cosh^2\alpha$, and also $E_{\mathrm{amp}}(\alpha,u)^2\ge\sin^2 u$ gives $E_{\mathrm{amp}}(\alpha,u)\ge|\sin u|$.
+\end{proof}
+
+This quantity is strictly positive for $\alpha\neq0$, and for fixed $\alpha$ it varies with $u$ in the same way as $|\sin u|$ up to the uniform floor $\sinh\alpha$.
+
+\begin{remark}[Uniform positivity at height]\label{rem:Eamp-bds}
+
+By Lemma~\ref{lem:Eamp-explicit}, for every $\alpha>0$ we have
+\[
+E_{\mathrm{amp}}(\alpha,u)=\sqrt{\sin^2 u+\sinh^2\alpha}\ge\sinh\alpha>0
+\qquad\text{for all }u\in\R.
+\]
+In particular, the normalization by $E_{\mathrm{amp}}(\alpha,u_k)$ is well-defined on the entire seam grid when $\eta>0$.
+\end{remark}
+
+We will repeatedly use the identity $E_{\mathrm{amp}}(\alpha,u)=\sqrt{\sin^2 u+\sinh^2\alpha}$ and the uniform bounds $\sinh\alpha\le E_{\mathrm{amp}}(\alpha,u)\le\cosh\alpha$ for $\alpha>0$.
+
+\subsection{Height-normalized endpoint samples}
+
+Let $\eta>0$ be fixed and set $\alpha:=\eta\ell/2$. On the sampling grid $u_k=\pi k/N$ from \eqref{eq:uk-grid}, with real abscissae $x_k=2u_k/\ell$, we define the \emph{height-normalized endpoint samples}
+\begin{equation}\label{eq:f-def}
+f_k(H;\eta)
+:=
+\frac{e^{+iz_k L/2}E_L(z_k;H)}{E_{\mathrm{amp}}(\alpha,u_k)},
+\qquad
+u_k:=\frac{\pi k}{N},\quad
+z_k:=\frac{2u_k}{\ell}+i\eta,\quad k=0,1,\dots,M-1.
+\end{equation}
+(for $\eta>0$ this denominator is strictly positive by Lemma~\ref{lem:Eamp-explicit}).
+
+At the base Hamiltonian $H_{\mathrm{base}}\equiv\tfrac12 I$ we have $E_{0,L}(z)=e^{-izL/2}$ and hence
+\[
+f_k(H_{\mathrm{base}};\eta)=\frac{1}{E_{\mathrm{amp}}(\alpha,u_k)}
+\qquad\text{for all }k.
+\]
+Thus the base seam vector is explicit and deterministic. We normalize by $|\sin(u_k+i\alpha)|$ (rather than by $\sin(u_k+i\alpha)$) so that the diagonal factor
+\[
+W^{(\eta)}_{k,k}=\frac{\sin(u_k+i\alpha)}{|\sin(u_k+i\alpha)|}
+\]
+is unimodular; this keeps the Jacobian’s singular values completely explicit in \Cref{sec:exp-frame}. (If desired, one can further rescale the data by $E_{\mathrm{amp}}(\alpha,u_k)$ to make the base data equal to $1$, but we keep the present normalization since it cleanly isolates a unimodular diagonal factor.)
+
+Using Lemma~\ref{lem:one-packet-complex} we obtain the following description of the height-normalized packets at the base.
+
+\begin{lemma}[Height-normalized packet derivatives at the base]
+\label{lem:height-packet}
+Let $\eta>0$ and $\alpha:=\eta\ell/2$. Fix a block $j$ and a real parameter $\vartheta\in\{h_j,k_j\}$. Then for all grid indices $k=0,1,\dots,M-1$ (for $\eta>0$ this denominator is strictly positive by Lemma~\ref{lem:Eamp-explicit}),
+\[
+\partial_\vartheta f_k(H;\eta)\Big|_{H_{\mathrm{base}}}
+=
+C_\vartheta\,
+\frac{\sin(u_k+i\alpha)}{E_{\mathrm{amp}}(\alpha,u_k)}\,
+e^{iq_j u_k}\,e^{-q_j\alpha},
+\qquad q_j:=2j+1,
+\]
+where $C_\vartheta\in\C\setminus\{0\}$ is as in Lemma~\ref{lem:one-packet-complex}.
+\end{lemma}
+
+\begin{proof}
+By definition \eqref{eq:f-def},
+\[
+f_k(H;\eta)
+=
+E_{\mathrm{amp}}(\alpha,u_k)^{-1}
+\,e^{+iz_kL/2}E_L(z_k;H).
+\]
+The intrinsic amplitude $E_{\mathrm{amp}}$ does not depend on the Hamiltonian $H$, so at the base we have
+\[
+\partial_\vartheta f_k(H;\eta)\Big|_{H_{\mathrm{base}}}
+=
+E_{\mathrm{amp}}(\alpha,u_k)^{-1}\,
+e^{+iz_kL/2}\,\partial_\vartheta E_L(z_k)\Big|_{H_{\mathrm{base}}}.
+\]
+Applying Lemma~\ref{lem:one-packet-complex} with $z=z_k$ and $u=u_k+i\alpha$ gives
+\[
+e^{+iz_kL/2}\,\partial_\vartheta E_L(z_k)\Big|_{H_{\mathrm{base}}}
+=
+C_\vartheta\,\sin(u_k+i\alpha)\,e^{iq_j (u_k+i\alpha)}.
+\]
+Dividing by $E_{\mathrm{amp}}(\alpha,u_k)$ yields
+\[
+\partial_\vartheta f_k(H;\eta)\Big|_{H_{\mathrm{base}}}
+=
+C_\vartheta\,
+\frac{\sin(u_k+i\alpha)}{E_{\mathrm{amp}}(\alpha,u_k)}\,
+e^{iq_j u_k}e^{-q_j\alpha},
+\]
+and we keep the factor $e^{-q_j\alpha}$ explicit in later sections when we discuss the dependence on the block index $j$.
+\end{proof}
+
+\begin{lemma}[Packet constants for the coordinate directions]\label{lem:packet-amplitudes}
+In the parametrization
+\[
+H_j=\frac12 I + h_j\,\sigmathree + k_j\,\sigmaone,\qquad p_j=k_j+i h_j,
+\]
+we have at the base Hamiltonian $H_{\mathrm{base}}\equiv\tfrac12 I$ the explicit direction constants
+\[
+C_{\mathrm{kdir}}=2,\qquad C_{\mathrm{hdir}}=-2i,\qquad
+C_{\mathrm{pdir}}:=C_{\mathrm{kdir}}+iC_{\mathrm{hdir}}=4.
+\]
+Consequently, for every block $j$ and every $z\in\C$ (with $u=\tfrac{z\ell}{2}$ and $q_j=2j+1$),
+\[
+e^{+izL/2}\,\partial_{k_j}E_L(z)\Big|_{H_{\mathrm{base}}}
+=2\,\sin(u)\,e^{iq_j u},
+\]
+\[
+e^{+izL/2}\,\partial_{h_j}E_L(z)\Big|_{H_{\mathrm{base}}}
+=-2i\,\sin(u)\,e^{iq_j u},
+\]
+and
+\[
+e^{+izL/2}\,\partial_{p_j}^{\mathrm{dir}}E_L(z)\Big|_{H_{\mathrm{base}}}
+=4\,\sin(u)\,e^{iq_j u}.
+\]
+\end{lemma}
+
+\begin{proof}
+At the base, $\partial_{k_j}H_j=\sigmaone$, so in Lemma~\ref{lem:one-packet-complex} we have $(a_\vartheta,b_\vartheta)=(0,1)$ and hence $C_k=2(b_\vartheta-i a_\vartheta)=2$. Similarly, $\partial_{h_j}H_j=\sigmathree$, so $(a_\vartheta,b_\vartheta)=(1,0)$ and hence $C_h=2(0-i\cdot1)=-2i$. Finally,
+\[
+\partial_{p_j}^{\mathrm{dir}}=\partial_{k_j}+i\,\partial_{h_j}
+\]
+gives $C_p=C_k+iC_h=2+i(-2i)=4$.
+\end{proof}
+
+Since $E_{\mathrm{amp}}(\alpha,u_k)=|\sin(u_k+i\alpha)|$, the ratio \[ \frac{\sin(u_k+i\alpha)}{E_{\mathrm{amp}}(\alpha,u_k)} \] is unimodular for every grid index $k$. Thus the height-normalized derivatives at the base retain the same exponential profile $e^{iq_j u_k}$ as at height $0$, up to a harmless unimodular diagonal factor in $k$ and the expected decay factor $e^{-q_j\alpha}$ in the block index $j$.
+
+\bigskip
+
+\section{Exponential frame and base conditioning}
+\label{sec:exp-frame}
+
+We now quantify the conditioning of the Jacobian of the height-normalized endpoint samples at the base Hamiltonian. The key observation is that the oversampled exponential system $\{e^{iq_j u_k}\}$ on the grid $u_k=\pi k/N$ with $M=PN$ points and $q_j=2j+1$ yields an exponential matrix $F\in\C^{M\times N}$ with exact discrete orthogonality ($F^\ast F=PN\,I_N$, Lemma~\ref{lem:F-orth}). Together with the diagonal weight matrices coming from the height normalization (which are unimodular on the seam), this implies that the full complex Jacobian $J^{(\eta)}_\C$ factors as $W^{(\eta)} F D^{(\eta)}$ with explicit singular values: a common $\sqrt{PN}$ scale from $F$ and an explicit diagonal decay $e^{-(2j+1)\alpha}$ from $D^{(\eta)}$.
+
+\subsection{Exponential matrix on the oversampled grid}
+
+We work on the oversampled seam grid
+\[
+u_k:=\frac{\pi k}{N},\qquad k=0,1,\dots,M-1,\qquad M:=PN,
+\]
+with odd block frequencies
+\[
+q_j:=2j+1,\qquad j=0,1,\dots,N-1.
+\]
+On this grid we define the $M\times N$ exponential matrix
+\[
+F\in\C^{M\times N},\qquad
+F_{k,j}:=e^{iq_j u_k}.
+\]
+The matrix $F$ collects the complex exponentials $e^{iq_j u_k}$ evaluated at all oversampled seam nodes.
+
+\begin{lemma}[Exact orthogonality on the oversampled grid]\label{lem:F-orth}
+For all $0\le j,j'\le N-1$,
+\[
+\sum_{k=0}^{M-1}e^{iq_j u_k}\,\overline{e^{iq_{j'} u_k}}
+=\sum_{k=0}^{M-1}e^{i(q_j-q_{j'})u_k}
+=\begin{cases}
+PN,& j=j',\\
+0,& j\neq j'.
+\end{cases}
+\]
+In other words, $F^\ast F=PN\,I_N$ and all singular values of $F$ equal $\sqrt{PN}$.
+\end{lemma}
+
+\begin{proof}
+Write $M=PN$ and recall $u_k=\pi k/N$. Then
+\[
+\sum_{k=0}^{M-1}e^{i(q_j-q_{j'})u_k}
+=\sum_{k=0}^{PN-1}\exp\Bigl(i\frac{\pi k}{N}(q_j-q_{j'})\Bigr)
+=\sum_{r=0}^{P-1}\sum_{k=0}^{N-1}
+\exp\Bigl(i\frac{\pi (k+rN)}{N}(q_j-q_{j'})\Bigr).
+\]
+Since
+\[
+\exp\Bigl(i\frac{\pi N}{N}(q_j-q_{j'})\Bigr)
+=e^{i\pi(q_j-q_{j'})}=1,
+\]
+each inner sum is independent of $r$, so the whole expression is $P$ times
+\[
+\sum_{k=0}^{N-1}\exp\Bigl(i\frac{\pi k}{N}(q_j-q_{j'})\Bigr).
+\]
+The latter sum is exactly the one appearing in the non-oversampled case. If $j=j'$ then $q_j-q_{j'}=0$ and the sum equals $N$. If $j\neq j'$ then $q_j-q_{j'}=2(j-j')$ is a nonzero even integer, so
+\[
+\sum_{k=0}^{N-1}e^{i(q_j-q_{j'})u_k}
+=\sum_{k=0}^{N-1}e^{i2(j-j')\pi k/N}
+=\frac{1-e^{i2(j-j')\pi}}{1-e^{i2(j-j')\pi/N}}=0,
+\]
+since $e^{i2(j-j')\pi}=1$ and $e^{i2(j-j')\pi/N}\neq1$ when $j\neq j'$ and $0\le j,j'\le N-1$. This shows that $F^\ast F=PN\,I_N$, and the singular values of $F$ are all $\sqrt{PN}$.
+\end{proof}
+
+\subsection{Factorization of the Jacobian at height $\eta$}
+
+We now combine Lemma~\ref{lem:height-packet} with the exponential matrix $F$ from the previous subsection to obtain a matrix factorization for the Jacobian of the height-normalized endpoint samples at the base Hamiltonian.
+
+Fix $\eta>0$. 
+
+\medskip
+\noindent\textbf{Jacobian notation.}
+We use the following consistent terminology:
+\begin{itemize}[leftmargin=1.35em,itemsep=0.2em,topsep=0.2em]
+\item $J^{(\eta)}_\C\in\C^{M\times N}$: the \emph{directional-derivative matrix} of the full seam vector $f(H;\eta)\in\C^M$ with entries $\bigl(\partial_{p_j}^{\mathrm{dir}}f_k\bigr)$ at $H_{\mathrm{base}}$. For the seam map considered here, the base linearization depends on increments through $\delta k_j-i\delta h_j$ (see the pairing convention in \Cref{sec:blocks}), so working with these complex directional combinations makes the base conditioning completely explicit.
+\item $J^{(\eta)}_\R\in\R^{2M\times 2N}$: the real Jacobian obtained by splitting $\Re/\Im$ on the data side and using real block coordinates on the parameter side.
+\item A subscript “$0$” (e.g.\ $J^{(\eta)}_{k,0}$) denotes restriction of seam indices to the first period $\mathcal{K}_0=\{0,\dots,N-1\}$, i.e.\ keeping only the first $N$ seam nodes. This is the square case (equivalently, the same formulas with $P=1$).
+\end{itemize}
+\medskip
+
+For each Hamiltonian $H$ in the uniform PD box we consider the vector
+\[
+f(H;\eta)
+:=\bigl(f_k(H;\eta)\bigr)_{k=0}^{M-1},
+\]
+where $f_k(H;\eta)$ is defined in \eqref{eq:f-def}, and view $f$ as a map from the real parameter vector $\theta=(h_j,k_j)_{j=0}^{N-1}\in\R^{2N}$ into \[\C^{M}\]. At the base $H_{\mathrm{base}}$ we are interested in the Jacobian of $f$ with respect to the complex coordinates $p_j=k_j+i h_j$.
+
+Let $J^{(\eta)}_{\C,\mathrm{full}}$ denote the complex Jacobian
+\[
+J^{(\eta)}_{\C,\mathrm{full}}
+:=\Bigl(\partial_{p_j}^{\mathrm{dir}}f_k(H;\eta)\Big|_{H_{\mathrm{base}}}\Bigr)_{0\le k\le M-1,\ 0\le j\le N-1}
+\in\C^{M\times N}.
+\]
+
+\medskip
+\noindent\textbf{Note on the factor $\tfrac12$ (directional derivatives vs.\ the real differential).}
+As a real differential in increment variables $(\delta k,\delta h)$, the pairing convention in \Cref{sec:blocks} gives
+\[
+D f(H_{\mathrm{base}};\eta)\,(\delta k,\delta h)
+=\frac12\,J^{(\eta)}_\C\,(\delta k-i\,\delta h),
+\]
+since $\partial_{\bar p_j}^{\mathrm{dir}}f_k\big|_{H_{\mathrm{base}}}=0$ for the seam observables used here. In other words, $J^{(\eta)}_\C$ records directional derivatives, while the real first variation includes the bookkeeping factor $\tfrac12$ coming from repackaging $(\delta k,\delta h)$ into $(\delta k\mp i\,\delta h)$. This distinction is purely notational and does not affect any singular-value statements.
+
+\begin{lemma}[Diagonal-exponential-diagonal factorization]
+\label{lem:J-factorization}
+Fix $\eta>0$ and set $\alpha:=\eta\ell/2$. Then the full complex Jacobian $J^{(\eta)}_{\C,\mathrm{full}}$ admits the factorization
+\[
+J^{(\eta)}_{\C,\mathrm{full}}
+=W^{(\eta)} F D^{(\eta)},
+\]
+where $W^{(\eta)}$ and $D^{(\eta)}$ are diagonal matrices with
+\[
+W^{(\eta)}_{k,k}
+=\frac{\sin(u_k+i\alpha)}{E_{\mathrm{amp}}(\alpha,u_k)},
+\qquad
+D^{(\eta)}_{j,j}=4\,e^{-q_j\alpha},
+\]
+and $F$ is the oversampled exponential matrix
+\[
+F_{k,j}:=e^{iq_j u_k},\quad 0\le k\le M-1,\ 0\le j\le N-1.
+\]
+\end{lemma}
+
+\begin{proof}
+Combining Lemma~\ref{lem:height-packet} (applied to $\vartheta=k_j$ and $\vartheta=h_j$) with
+$\partial_{p_j}^{\mathrm{dir}}=\partial_{k_j}+i\,\partial_{h_j}$ and the constants from
+Lemma~\ref{lem:packet-amplitudes}, we obtain for each block index $j$ and each grid index $k$ the base directional derivatives that form the complex Jacobian used below,
+\[
+\partial_{p_j}^{\mathrm{dir}}f_k(H;\eta)\Big|_{H_{\mathrm{base}}}
+=
+4\,\frac{\sin(u_k+i\alpha)}{E_{\mathrm{amp}}(\alpha,u_k)}\,
+e^{iq_j u_k}e^{-q_j\alpha}.
+\]
+Thus
+\[
+\partial_{p_j}^{\mathrm{dir}}f_k(H;\eta)\Big|_{H_{\mathrm{base}}}
+=
+W^{(\eta)}_{k,k}\,F_{k,j}\,D^{(\eta)}_{j,j},
+\]
+with the stated diagonal matrices $W^{(\eta)}$ and $D^{(\eta)}$, and $F$ defined by $F_{k,j}=e^{iq_j u_k}$. Since $E_{\mathrm{amp}}(\alpha,u_k)\neq0$ for all $u_k$ when $\alpha>0$, this identity holds for all $0\le k\le M-1$ and $0\le j\le N-1$, so we obtain the factorization $J^{(\eta)}_{\C,\mathrm{full}}=W^{(\eta)}FD^{(\eta)}$.
+\end{proof}
+
+For the remainder of this section we will simply denote the full Jacobian by
+\[
+J^{(\eta)}_\C:=J^{(\eta)}_{\C,\mathrm{full}}\in\C^{M\times N},
+\]
+so that the Jacobian factorization takes the concise form
+\[
+J^{(\eta)}_\C=W^{(\eta)} F D^{(\eta)}.
+\]
+
+To control the singular values of $J^{(\eta)}_\C$ it suffices to bound the diagonal weights above and below.
+
+\begin{lemma}[Diagonal bounds]\label{lem:diag-bds}
+Fix $\eta>0$ and set $\alpha:=\eta\ell/2>0$. Then
+\[
+|W^{(\eta)}_{k,k}|=1
+\qquad\text{for all }k=0,\dots,M-1,
+\]
+and, since \(D^{(\eta)}_{j,j}=4e^{-q_j\alpha}\) with \(q_j=2j+1\),
+\[
+4e^{-(2N-1)\alpha}\le |D^{(\eta)}_{j,j}|\le 4e^{-\alpha}
+\qquad\text{for all }j=0,\dots,N-1.
+\]
+\end{lemma}
+
+\begin{proof}
+By definition \(E_{\mathrm{amp}}(\alpha,u_k)=|\sin(u_k+i\alpha)|\), so
+\[
+|W^{(\eta)}_{k,k}|
+=\frac{|\sin(u_k+i\alpha)|}{E_{\mathrm{amp}}(\alpha,u_k)}
+=1
+\]
+for all \(k\). The bounds for \(D^{(\eta)}\) are immediate from \(D^{(\eta)}_{j,j}=4e^{-(2j+1)\alpha}\) and \(1\le 2j+1\le 2N-1\).
+\end{proof}
+
+\begin{remark}
+The diagonal entries \(D^{(\eta)}_{j,j}=4e^{-(2j+1)\alpha}\) decay exponentially in the block index \(j\). For fixed \((L,N,\eta)\) this is explicit and finite, but it makes the smallest singular values exponentially small when \(N\) is large and \(\eta\ell\) is fixed.
+\end{remark}
+
+\begin{remark}\label{rem:F-frame}
+The identity $F^\ast F=PN\,I_N$ simply says the columns of $F$ are orthogonal with squared norm $PN$.
+\end{remark}
+
+\subsection{Base conditioning at height}
+
+We can now combine Lemmas~\ref{lem:F-orth}, \ref{lem:J-factorization} and~\ref{lem:diag-bds} to control the singular values of the base Jacobian.
+
+\begin{theorem}[Base singular values at fixed height]\label{thm:base-cond}
+Fix $\eta>0$ and set $\alpha:=\eta\ell/2$. Let
+\[
+J^{(\eta)}_\C=W^{(\eta)} F D^{(\eta)}\in\C^{M\times N}
+\]
+be the complex Jacobian at $H_{\mathrm{base}}$ described in Lemma~\ref{lem:J-factorization}, with $M=PN$ and $q_j=2j+1$. Then
+\[
+(J^{(\eta)}_\C)^\ast J^{(\eta)}_\C
+=PN\,D^{(\eta)\,*}D^{(\eta)},
+\qquad
+D^{(\eta)}_{j,j}=4\,e^{-q_j\alpha}.
+\]
+In particular, the singular values are
+\[
+\sigma_j\bigl(J^{(\eta)}_\C\bigr)=4\sqrt{PN}\,e^{-(2j+1)\alpha},
+\qquad j=0,1,\dots,N-1,
+\]
+where this indexing is decreasing in $j$ (so $\sigma_0=\sigma_{\max}$ and $\sigma_{N-1}=\sigma_{\min}$). Therefore
+\[
+4\sqrt{PN}\,e^{-(2N-1)\alpha}\le\sigma_{\min}\bigl(J^{(\eta)}_\C\bigr)
+\le\sigma_{\max}\bigl(J^{(\eta)}_\C\bigr)\le 4\sqrt{PN}\,e^{-\alpha}.
+\]
+\end{theorem}
+
+\begin{proof}
+Since $|W^{(\eta)}_{k,k}|=1$ for all $k$, we have $W^{(\eta)\,*}W^{(\eta)}=I_M$. By Lemma~\ref{lem:F-orth}, $F^\ast F=PN\,I_N$. Therefore
+\[
+(J^{(\eta)}_\C)^\ast J^{(\eta)}_\C
+=D^{(\eta)\,*}F^\ast W^{(\eta)\,*}W^{(\eta)}F D^{(\eta)}
+=D^{(\eta)\,*}(PN\,I_N)D^{(\eta)}
+=PN\,D^{(\eta)\,*}D^{(\eta)}.
+\]
+With $D^{(\eta)}_{j,j}=4e^{-(2j+1)\alpha}$, the eigenvalues of $(J^{(\eta)}_\C)^\ast J^{(\eta)}_\C$ are $PN\,|D^{(\eta)}_{j,j}|^2$, so the singular values are $4\sqrt{PN}\,e^{-(2j+1)\alpha}$.
+\end{proof}
+
+In later sections we will pass from the complex coordinates $p_j$ to real block coordinates $(\xi_j^{(1)},\xi_j^{(2)})$ as in Lemma~\ref{lem:two-real-packets}. Since the change of coordinates on each block is uniformly invertible on the uniform PD box, the $\Theta(\sqrt{N})$ conditioning persists for the real Jacobian with respect to the real parameters.
+
+\bigskip
+
+\section{Height-strip rectangle and optional $\mathrm{SU}(1,1)$/Schur background}
+\label{sec:strip-SU11}
+
+This section is optional background. It records a convenient height-strip notation and recalls standard $\mathrm{SU}(1,1)$/Schur facts that are useful in variants where the Weyl Schur function is the primary observable. None of the quantitative estimates in \Cref{sec:Lip-Jacobian,sec:real-square,sec:IFT-scheme} use this material; all bounds for the finite-length scheme are derived directly from Duhamel-type integral representations.
+
+\subsection{Height-strip domains at height}
+
+Fix $\eta>0$ and $L>0$. In later sections we will only evaluate our functions at finitely many points $z_k=x_k+i\eta$ on the seam grid, with
+\[
+x_k=\frac{2\pi k}{L},\qquad k=0,1,\dots,M-1,\quad M=PN.
+\]
+It is therefore convenient to work with a fixed \emph{closed} rectangle whose boundary contains all these points. Set
+\[
+W_L:=x_{M-1}=\frac{2\pi(M-1)}{L}.
+\]
+Although our seam nodes satisfy $x_k\ge0$, we symmetrize in $x$ and work on $[-W_L,W_L]$ for notational convenience when defining a compact height strip.
+
+We define the height-strip rectangle $\Omega_\eta(L)\subset\C$ by
+\[
+\Gamma_{\mathrm{top}}(L)
+:=\bigl\{x+2i\eta:\,-W_L\le x\le W_L\bigr\},\qquad
+\Gamma_{\mathrm{bot}}(L)
+:=\bigl\{x+i\eta:\,-W_L\le x\le W_L\bigr\},
+\]
+and connect these two horizontal segments by two vertical caps
+\[
+\Gamma_{\mathrm{left}}(L)
+:=\bigl\{-W_L+iy:\,\eta\le y\le 2\eta\bigr\},\qquad
+\Gamma_{\mathrm{right}}(L)
+:=\bigl\{W_L+iy:\,\eta\le y\le 2\eta\bigr\}.
+\]
+We then set
+\[
+\Gamma_\eta(L)
+:=\Gamma_{\mathrm{top}}(L)\cup\Gamma_{\mathrm{bot}}(L)
+\cup\Gamma_{\mathrm{left}}(L)\cup\Gamma_{\mathrm{right}}(L),
+\]
+and let $\Omega_\eta(L)$ be the bounded open set whose boundary is $\Gamma_\eta(L)$. Thus $\overline{\Omega_\eta(L)}$ is the closed rectangle
+\[
+\{x+iy:\,-W_L\le x\le W_L,\ \eta\le y\le 2\eta\},
+\]
+whose boundary is $\Gamma_\eta(L)$. We only sample at height $\eta$, but we keep a slightly thicker strip $\eta \le \Im z \le 2\eta$ in reserve so that future height perturbations remain in a compact set where our estimates are uniform.
+
+\begin{lemma}[Basic geometry of the height-strip rectangle $\Omega_\eta(L)$]\label{lem:strip-geom}
+For each $\eta>0$ and $L>0$, the domain $\Omega_\eta(L)$ is a bounded, simply connected Jordan domain with piecewise $C^{1,1}$ boundary. Its boundary length is
+\[
+|\Gamma_\eta(L)|=4W_L+2\eta
+=\frac{8\pi(M-1)}{L}+2\eta,
+\qquad W_L=\frac{2\pi(M-1)}{L},\quad M=PN.
+\]
+\end{lemma}
+
+\begin{proof}
+The boundary $\Gamma_\eta(L)$ is the union of four line segments enclosing the closed rectangle
+\[
+\{x+iy:\,-W_L\le x\le W_L,\ \eta\le y\le 2\eta\},
+\]
+so it is a simple closed piecewise $C^{1,1}$ curve. The length is
+\[
+|\Gamma_\eta(L)|
+=2\cdot(2W_L)+2\cdot(\eta)
+=4W_L+2\eta
+=\frac{8\pi(M-1)}{L}+2\eta.
+\]
+\end{proof}
+
+We refer to $\Gamma_{\mathrm{top}}(L)\cup\Gamma_{\mathrm{bot}}(L)$ as the \emph{horizontal seams} and to $\Gamma_{\mathrm{left}}(L)\cup\Gamma_{\mathrm{right}}(L)$ as the \emph{vertical caps}. In this paper our analysis is conducted directly on the seams $\Gamma_{\mathrm{top}}(L)\cup\Gamma_{\mathrm{bot}}(L)$; the full domain $\Omega_\eta(L)$ is introduced only to keep the geometry of the height strip explicit.
+
+\subsection{$\mathrm{SU}(1,1)$ and the pseudohyperbolic metric}
+
+We recall some standard facts about the group $\mathrm{SU}(1,1)$ and its action on the unit disc; see, for example, \cite{Potapov1960, ArovDym2008,Beardon1983,Garnett2007,Duren1970}.
+
+\begin{definition}[$\mathrm{SU}(1,1)$ and Möbius action]
+A matrix
+\[
+U=\begin{psmallmatrix}a&b\\ \overline{b}&\overline{a}\end{psmallmatrix}
+\]
+belongs to $\mathrm{SU}(1,1)$ if $|a|^2-|b|^2=1$. Each such $U$ acts on the unit disc $\D:=\{w\in\C:|w|<1\}$ via the Möbius transform
+\[
+\varphi_U(w):=\frac{a w+b}{\overline{b}w+\overline{a}}.
+\]
+\end{definition}
+
+\begin{lemma}[Basic properties of $\mathrm{SU}(1,1)$ action]
+\label{lem:SU11-basic}
+If $U\in\mathrm{SU}(1,1)$, then:
+
+\begin{enumerate}[label=(\roman*),itemsep=0.3em]
+\item $\varphi_U$ is an automorphism of $\D$, with holomorphic inverse $\varphi_{U^{-1}}$.
+\item For all $w\in\D$,
+\[
+|\varphi_U(w)|
+\le\frac{|a||w|+|b|}{|b||w|+|a|}<1.
+\]
+\item The derivative satisfies
+\[
+\varphi_U'(w)
+=\frac{1}{(\overline{b}w+\overline{a})^2},
+\]
+so in particular
+\[
+|\varphi_U'(w)|
+\le\frac{1}{(|a|-|b||w|)^2}.
+\]
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+These are standard facts about automorphisms of $\D$; see for instance \cite[Ch.~I]{Duren1970}, \cite[Ch.~3]{Garnett2007} or \cite[Ch.~8]{Beardon1983}. The formula for $\varphi_U'(w)$ is obtained by differentiating the Möbius transform and using $|a|^2-|b|^2=1$.
+\end{proof}
+
+The natural distance on $\D$ for $\mathrm{SU}(1,1)$ actions is the pseudohyperbolic metric.
+
+\begin{definition}[Pseudohyperbolic metric]\label{def:beta}
+For $w_1,w_2\in\D$ we define
+\[
+\beta(w_1,w_2)
+:=\left|\frac{w_1-w_2}{1-\overline{w_2}w_1}\right|.
+\]
+\end{definition}
+
+\begin{lemma}[Invariance of $\beta$]\label{lem:beta-invariance}
+If $U\in\mathrm{SU}(1,1)$ and $w_1,w_2\in\D$, then
+\[
+\beta\bigl(\varphi_U(w_1),\varphi_U(w_2)\bigr)
+=\beta(w_1,w_2).
+\]
+\end{lemma}
+
+\begin{proof}
+A direct computation using $\varphi_U(w)=(a w+b)/(\overline{b}w+\overline{a})$ and $|a|^2-|b|^2=1$ shows that
+\[
+\frac{\varphi_U(w_1)-\varphi_U(w_2)}{1-\overline{\varphi_U(w_2)}\varphi_U(w_1)}
+=e^{i\theta}\frac{w_1-w_2}{1-\overline{w_2}w_1}
+\]
+for some real $\theta$ depending on $U$ and $w_2$; see, e.g., \cite[Ch.~3]{Garnett2007}. Taking absolute values yields the claim.
+\end{proof}
+
+The following elementary inequality expresses the relationship between the Euclidean and pseudohyperbolic distances in the presence of a Schur margin.
+
+\begin{lemma}[Euclidean vs.\ pseudohyperbolic distance]
+\label{lem:beta-vs-euclid}
+Fix $\rho\in(0,1)$ and assume $|w_1|\le\rho$ and $|w_2|\le\rho$. Then
+\[
+(1-\rho^2)\,\beta(w_1,w_2)
+\ \le\
+|w_1-w_2|
+\ \le\
+(1+\rho^2)\,\beta(w_1,w_2).
+\]
+\end{lemma}
+
+\begin{proof}
+By the definition of $\beta$,
+\[
+|w_1-w_2|
+=\beta(w_1,w_2)\,|1-\overline{w_2}w_1|.
+\]
+Estimate $|1-\overline{w_2}w_1|\le 1+|w_1||w_2|\le1+\rho^2$ and $|1-\overline{w_2}w_1|\ge 1-|w_1||w_2|\ge1-\rho^2$ to obtain
+\[
+(1-\rho^2)\beta(w_1,w_2)
+\le |w_1-w_2|
+\le(1+\rho^2)\beta(w_1,w_2).
+\]
+\end{proof}
+
+\subsection{SU(1,1) description of the Weyl Schur function}
+
+The Schur transform $v_L$ of the Weyl function $m_L$ can be described via a product of $\mathrm{SU}(1,1)$ matrices associated with the block transfer matrices of the canonical system. We record the standard structural statement here; detailed proofs can be found in \cite{Potapov1960,ArovDym2008}. While the quantitative derivative bounds in later sections are derived directly from Duhamel's formula, we include this structure as conceptual background for future work where the nonlinear Weyl Schur function will be the primary object.
+
+Let $H$ be a real PSD Hamiltonian with $\tr H\equiv1$ and canonical tail on $[L,\infty)$. For each $s\in[0,L]$ let $m(s;z)$ denote the Weyl function of the half-line problem on $[s,\infty)$, so that $m(0;z)=m_L(z)$. The corresponding Schur transform
+\[
+v(s;z):=\frac{m(s;z)-i}{m(s;z)+i}
+\]
+is a Schur function on $\Hh$ for each $s$.
+
+\begin{lemma}[Blockwise $\mathrm{SU}(1,1)$ update for $v$]
+\label{lem:SU11-update}
+Let $H$ be constant on a block $[s_0,s_1]$ and let $\Phi(s_1,s_0;z)$ be the corresponding transfer matrix. Then for each $z\in\Hh$ there exists a matrix $U(z)\in\mathrm{SU}(1,1)$ such that
+\[
+v(s_0;z)=\varphi_{U(z)}(v(s_1;z)),
+\]
+where $\varphi_{U(z)}$ is the Möbius transform associated with $U(z)$.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+The Weyl function $m(s;z)$ evolves under linear fractional transformations induced by the transfer matrix across $[s_0,s_1]$; see \cite[Ch.~VI]{deBranges1968} or \cite{Romanov2014}. Passing to the Schur transform $v(s;z)$ converts these into $\mathrm{SU}(1,1)$ automorphisms of the unit disc. The explicit formula for $U(z)$ in terms of the entries of $\Phi(s_1,s_0;z)$ can be found, for example, in \cite{ArovDym2008,Potapov1960}.
+\end{proof}
+
+Iterating Lemma~\ref{lem:SU11-update} along the blocks of $H$ shows that $v(0;z)=v_L(z)$ can be obtained from the canonical tail at $s=L$ by composing $\mathrm{SU}(1,1)$ transforms along the block partition. At the tail $H\equiv\tfrac12 I$ we have $m(L;z)\equiv i$ and hence $v(L;z)\equiv0$, so $v_L(z)$ is obtained by applying a product of $\mathrm{SU}(1,1)$ automorphisms to the origin in~$\D$.
+
+\subsection{Optional Schur-margin control (background)}
+
+The material in this section is included only as background for variants of the present “scheme” in which the Weyl Schur function $v_L$ is used as the primary observable. In that setting it is convenient to restrict attention to Hamiltonians for which $v_L$ stays in a fixed compact subset of $\D$ on a prescribed compact $z$-set (e.g.\ a height strip), because then the corresponding $\mathrm{SU}(1,1)$ Möbius updates act with uniform Euclidean Lipschitz constants on that subset (by Lemma~\ref{lem:SU11-basic}).  
+
+In the present paper, however, all quantitative bounds in the next sections are derived directly from Duhamel-type integral representations and do not rely on any Schur-margin restriction.
+
+\bigskip
+
+\section{Lipschitz bounds for the seam Jacobian}
+\label{sec:Lip-Jacobian}
+
+We now derive Lipschitz bounds on the Jacobian of the height-normalized endpoint samples with respect to the block parameters directly from variation-of-parameters. The key observation is that the second derivatives of $E_L(z)$ (and hence of $f_k(H;\eta)$) with respect to the block parameters admit double-Duhamel representations as integrals over $[0,L]^2$ of products of propagators and fixed matrices. Using the propagator bound $\|\Phi(s,t;z)\|\le e^{|z|(s-t)}$ and the identity \[ (L-s_2)+(s_2-s_1)+s_1=L, \] one obtains a crude (but explicit) estimate of order $|z|^2 e^{|z|L}L^2$ on the height-strip rectangle (where $|z|$ is uniformly bounded). The $\mathrm{SU}(1,1)$ material from \Cref{sec:strip-SU11} is optional background and is not used in the quantitative bounds proved in this section.
+
+\subsection{Second derivatives via double Duhamel}
+
+Let $H(s)$ be a block-constant Hamiltonian with block values in the uniform PD box $\mathcal{B}$. We parameterize $H$ by the real block parameters $(h_j,k_j)_{j=0}^{N-1}$, i.e.\ by a vector $\theta\in\R^{2N}$ built from these coordinates. (If one uses a different blockwise real-linear coordinate system, the estimates below change only by uniform multiplicative constants determined by that change of coordinates.)
+
+Fix two real parameters $\vartheta_1,\vartheta_2$ (each one of the coordinates $h_j$ or $k_j$ on some block). Let $\Phi(\cdot,\cdot;z)$ denote the corresponding transfer matrix for the canonical system
+\[
+JY'(s)=zH(s)Y(s).
+\]
+Since $A(s):=-zJH(s)$ depends linearly on $H(s)$, the first parameter derivative of $\Phi(L,0;z)$ is given by the standard Duhamel formula, and differentiating once more yields the standard second-variation formula: for every $z\in\C$,
+\begin{align}
+\partial^2_{\vartheta_1\vartheta_2}\Phi(L,0;z)
+&=
+z^2\iint_{0\le s_1\le s_2\le L}
+\Phi(L,s_2;z)\,J\,\partial_{\vartheta_2}H(s_2)\,
+\Phi(s_2,s_1;z)\,J\,\partial_{\vartheta_1}H(s_1)\,
+\Phi(s_1,0;z)\,ds_1\,ds_2
+\nonumber\\
+&\quad
++
+z^2\iint_{0\le s_2\le s_1\le L}
+\Phi(L,s_1;z)\,J\,\partial_{\vartheta_1}H(s_1)\,
+\Phi(s_1,s_2;z)\,J\,\partial_{\vartheta_2}H(s_2)\,
+\Phi(s_2,0;z)\,ds_2\,ds_1.
+\label{eq:double-duhamel}
+\end{align}
+In our block-constant setting each $\partial_{\vartheta_m}H(\cdot)$ is supported on a single block and equals one of the fixed matrices $\sigmathree$ or $\sigmaone$ (hence has norm $1$). Testing \eqref{eq:double-duhamel} against $\lambda_+$ and $e_1$ gives a corresponding representation for $\partial^2_{\vartheta_1\vartheta_2}E_L(z)=\lambda_+(\partial^2_{\vartheta_1\vartheta_2}\Phi(L,0;z))e_1$.
+
+For explicit base computations one may replace $\Phi$ by the base propagator $\Phi_0$ when $H=H_{\mathrm{base}}$, but for the Lipschitz bounds below we use the uniform form \eqref{eq:double-duhamel} for all $H\in\mathcal{B}^N$.
+
+\begin{lemma}[Second-derivative bound for $E_L$]\label{lem:E-second-deriv}
+Fix $\eta>0$ and a compact constraint set $\mathcal{B}$. For $L>0$ define
+\[
+Z_{\max}:=\sup_{z\in\overline{\Omega_\eta(L)}}|z|.
+\]
+Then for every block-constant Hamiltonian $H\in\mathcal{B}^N$, every pair of block
+parameters $\vartheta_1,\vartheta_2$, and every $z\in\overline{\Omega_\eta(L)}$,
+\[
+\left|
+\partial^2_{\vartheta_1\vartheta_2}E_L(z;H)
+\right|
+\le \sqrt{2}\,|z|^2\,e^{|z|L}\,L^2
+\ \le\ \sqrt{2}\,Z_{\max}^2\,e^{Z_{\max}L}\,L^2.
+\]
+\end{lemma}
+
+\begin{proof}
+Write $\Phi(\cdot,\cdot;z)$ for the transfer matrix of
+\[
+JY'(s)=zH(s)Y(s),\qquad Y'(s)=-zJH(s)Y(s).
+\]
+The double Duhamel formula \eqref{eq:double-duhamel} expresses
+$\partial^2_{\vartheta_1\vartheta_2}\Phi(L,0;z)$ as a sum of two integrals over
+two triangular regions in $[0,L]^2$, each of area $L^2/2$. For $0\le t\le s\le L$,
+Lemma~\ref{lem:Phi-bds} gives $\|\Phi(s,t;z)\|\le e^{|z|(s-t)}$.
+In our block coordinates, each $\partial_{\vartheta_m}H(s)$ is either
+$\sigmathree\mathbf{1}_{I_j}(s)$ or $\sigmaone\mathbf{1}_{I_j}(s)$, hence has
+operator norm at most $1$. Therefore, for $0\le s_1\le s_2\le L$,
+the corresponding integrand norm is bounded by
+\[
+|z|^2\,\|\Phi(L,s_2;z)\|\,\|\Phi(s_2,s_1;z)\|\,\|\Phi(s_1,0;z)\|
+\le |z|^2\,e^{|z|\bigl((L-s_2)+(s_2-s_1)+s_1\bigr)}
+=|z|^2e^{|z|L}.
+\]
+Each triangle integral is thus bounded by $|z|^2e^{|z|L}\cdot(L^2/2)$, and summing the two gives
+\[
+\bigl\|\partial^2_{\vartheta_1\vartheta_2}\Phi(L,0;z)\bigr\|
+\le |z|^2\,e^{|z|L}\,L^2.
+\]
+Finally,
+\[
+\left|
+\partial^2_{\vartheta_1\vartheta_2}E_L(z;H)
+\right|
+=\left|\lambda_+\,\partial^2_{\vartheta_1\vartheta_2}\Phi(L,0;z)\,e_1\right|
+\le \|\lambda_+\|\;\|e_1\|\;\bigl\|\partial^2_{\vartheta_1\vartheta_2}\Phi(L,0;z)\bigr\|.
+\]
+Since $\|\lambda_+\|=\sqrt{2}$ and $\|e_1\|=1$, the stated bound follows.
+\end{proof}
+
+\begin{lemma}[Uniform second-derivative bound for $E_L$ on a height range]
+\label{lem:E-second-deriv-uniform}
+Fix $\eta_{\max}>0$ and a compact constraint set $\mathcal{B}$. For each $L>0$
+define
+\[
+Z_{\max}^\ast:=\sup\bigl\{|z|:\ z\in\overline{\Omega_\eta(L)}\ \text{for some}\ \eta\in(0,\eta_{\max}]\bigr\}.
+\]
+Then for every height $0<\eta\le\eta_{\max}$, every block-constant $H\in\mathcal{B}^N$,
+every $z\in\overline{\Omega_\eta(L)}$, and every pair of block parameters $\vartheta_1,\vartheta_2$,
+\[
+\left|
+\partial^2_{\vartheta_1\vartheta_2}E_L(z;H)
+\right|
+\le \sqrt{2}\,(Z_{\max}^\ast)^2\,e^{Z_{\max}^\ast L}\,L^2.
+\]
+\end{lemma}
+
+\begin{proof}
+Apply Lemma~\ref{lem:E-second-deriv} for each $\eta\in(0,\eta_{\max}]$ and bound $|z|\le Z_{\max}^\ast$ uniformly over the compact union of rectangles.
+\end{proof}
+
+\subsection{Second derivatives of height-normalized samples}
+
+We now translate Lemma~\ref{lem:E-second-deriv} into bounds for the second derivatives of the normalized samples $f_k(H;\eta)$ defined in \eqref{eq:f-def}. Differentiating \eqref{eq:f-def} twice (noting that $E_{\mathrm{amp}}$ is independent of $H$) gives
+\[
+\partial^2_{\vartheta_1\vartheta_2}f_k(H;\eta)
+=
+E_{\mathrm{amp}}(\alpha,u_k)^{-1}\,
+e^{+iz_kL/2}\,\partial^2_{\vartheta_1\vartheta_2}E_L(z_k;H),
+\]
+with $z_k=x_k+i\eta$. Using Lemma~\ref{lem:E-second-deriv} and the uniform lower bound $E_{\mathrm{amp}}(\alpha,u_k)\ge\sinh\alpha>0$ (Lemma~\ref{lem:Eamp-explicit}), we obtain the following.
+
+\begin{lemma}[Second-derivative bound for $f_k$]\label{lem:f-second-deriv}
+Fix $\eta>0$, set $\alpha:=\eta\ell/2>0$, and define $Z_{\max}:=\sup_{z\in\overline{\Omega_\eta(L)}}|z|$.
+Then for every block-constant $H\in\mathcal{B}^N$, every grid index $k=0,1,\dots,M-1$,
+and every pair of block parameters $\vartheta_1,\vartheta_2$,
+\[
+\left|
+\partial^2_{\vartheta_1\vartheta_2}f_k(H;\eta)
+\right|
+\le \frac{\sqrt{2}}{\sinh\alpha}\,Z_{\max}^2\,e^{Z_{\max}L}\,L^2.
+\]
+\end{lemma}
+
+\begin{proof}
+From \eqref{eq:f-def},
+\[
+\partial^2_{\vartheta_1\vartheta_2}f_k(H;\eta)
+=\frac{e^{+iz_kL/2}}{E_{\mathrm{amp}}(\alpha,u_k)}\,\partial^2_{\vartheta_1\vartheta_2}E_L(z_k;H),
+\qquad z_k=x_k+i\eta.
+\]
+By Lemma~\ref{lem:Eamp-explicit}, $E_{\mathrm{amp}}(\alpha,u_k)\ge\sinh\alpha$, and by
+Lemma~\ref{lem:E-second-deriv} we have
+$|\partial^2_{\vartheta_1\vartheta_2}E_L(z_k;H)|\le \sqrt{2}\,Z_{\max}^2 e^{Z_{\max}L}L^2$.
+Combining these bounds yields \[ \left| \partial^2_{\vartheta_1\vartheta_2}f_k(H;\eta) \right| \le \frac{\sqrt{2}}{\sinh\alpha}\,Z_{\max}^2\,e^{Z_{\max}L}\,L^2, \] as claimed.
+\end{proof}
+
+Since $\partial_{p_j}^{\mathrm{dir}}=\partial_{k_j}+i\,\partial_{h_j}$ is a fixed complex-linear combination of the real derivatives and any other blockwise coordinate system is uniformly bi-Lipschitz on the fixed uniform PD box, we may regard Lemma~\ref{lem:f-second-deriv} as a bound on all mixed second derivatives $\partial^2_{\theta_a\theta_b}f_k$ at the base, where $\theta_a$ and $\theta_b$ are arbitrary real coordinates in the parameter vector $\theta\in\R^{2N}$.
+
+\begin{lemma}[Uniform second-derivative bound for the normalized seam samples]
+\label{lem:f-second-deriv-uniform}
+Fix $0<\eta_{\min}\le\eta_{\max}$ and a uniform PD box $\mathcal{B}$. Let $f_k(H;\eta)$ be the height-normalized samples defined in \eqref{eq:f-def}. Then there exists a constant
+$C_f^\ast(\eta_{\min},\eta_{\max},L,N,P,\mathcal{B})<\infty$ such that for every height $\eta\in[\eta_{\min},\eta_{\max}]$, every block-constant $H\in\mathcal{B}^N$, every grid index $k=0,1,\dots,M-1$, and every pair of real parameters $\theta_a,\theta_b$,
+\[
+\bigl|\partial^2_{\theta_a\theta_b} f_k(H;\eta)\bigr|
+\le C_f^\ast(\eta_{\min},\eta_{\max},L,N,P,\mathcal{B})\,L^2.
+\]
+\end{lemma}
+
+\begin{proof}
+Combine Lemma~\ref{lem:E-second-deriv-uniform} with the identity
+\[
+\partial^2_{\theta_a\theta_b}f_k(H;\eta)
+=\frac{e^{+iz_kL/2}}{E_{\mathrm{amp}}(\alpha,u_k)}\,
+\partial^2_{\theta_a\theta_b}E_L(z_k;H),
+\]
+and use the uniform lower bound $E_{\mathrm{amp}}(\alpha,u_k)\ge\sinh(\eta_{\min}\ell/2)$ on the height range $\eta\in[\eta_{\min},\eta_{\max}]$.
+\end{proof}
+
+\subsection{Lipschitz bound for the Jacobian}
+
+Let
+\[
+\mathbf{f}(H;\eta)
+:=\bigl(f_k(H;\eta)\bigr)_{k=0}^{M-1}
+\in\C^{M}
+\]
+denote the stacked vector of height-normalized samples on the full seam grid. Writing $\mathbf{f}:\Theta\to\C^{M}$ with $\Theta\subset\R^{2N}$ a neighbourhood of the base point $\theta_0$ corresponding to $H_{\mathrm{base}}$, we consider its (real) derivative matrix
+\[
+\mathcal{J}(\theta):=D_\theta \mathbf{f}(H(\theta);\eta)\in\C^{M\times 2N},
+\]
+viewed as the matrix of a real-linear map $\R^{2N}\to \C^{M}\cong\R^{2M}$.
+
+\begin{theorem}[Lipschitz bound for the seam Jacobian on a parameter ball]\label{thm:Lip-J}
+Fix $\eta>0$ and a compact constraint set $\mathcal{B}$ containing the base Hamiltonian $H_{\mathrm{base}}$. Let $\Theta\subset\R^{2N}$ be an open parameter set and assume there exists a radius $R>0$ such that the closed Euclidean ball $B(\theta_0,R)\subset\Theta$ satisfies $H(\theta)\in\mathcal{B}^N$ for all $\theta\in B(\theta_0,R)$. Then there exists a constant
+\[
+L_{\mathcal{J}}(\eta,L,\mathcal{B},N,P,R)<\infty
+\]
+such that for all $\theta,\tilde\theta\in B(\theta_0,R)$,
+\[
+\bigl\|\mathcal{J}(\theta)-\mathcal{J}(\tilde\theta)\bigr\|_{2\to2}
+\le L_{\mathcal{J}}(\eta,L,\mathcal{B},N,P,R)\,\|\theta-\tilde\theta\|_{\ell^2}.
+\]
+Under the crude estimates coming from double Duhamel, one may take $L_{\mathcal{J}}$ of size $\sim Z_{\max}^2 e^{Z_{\max}L}L^2$ (where $Z_{\max}:=\sup_{z\in\overline{\Omega_\eta(L)}}|z|$), up to a polynomial factor in $(N,P)$.
+\end{theorem}
+
+\begin{proof}
+Since $B(\theta_0,R)$ is convex, Taylor's theorem with integral remainder along the line segment applies: for each fixed grid index $k\in\{0,\dots,M-1\}$ and each coordinate $\theta_a$ we have
+\[
+\partial_{\theta_a}f_k(H(\theta);\eta)
+-\partial_{\theta_a}f_k(H(\tilde\theta);\eta)
+=
+\sum_{b=1}^{2N}\int_0^1
+\partial^2_{\theta_a\theta_b}
+f_k\bigl(H(\tilde\theta+t(\theta-\tilde\theta));\eta\bigr)\,
+(\theta_b-\tilde\theta_b)\,dt.
+\]
+Taking absolute values and using Lemma~\ref{lem:f-second-deriv} uniformly on $\mathcal{B}^N$ yields an entrywise bound of the form
+\[
+\left|
+\partial_{\theta_a}f_k(H(\theta);\eta)
+-\partial_{\theta_a}f_k(H(\tilde\theta);\eta)
+\right|
+\le C(\eta,\mathcal{B})\,L^2 \sum_{b=1}^{2N}|\theta_b-\tilde\theta_b|.
+\]
+Collecting these bounds over all $k$ and $a$ and using $\|\cdot\|_{2\to2}\le \|\cdot\|_{\mathrm{F}}$ (Frobenius norm) together with $\|\cdot\|_{\ell^1}\le \sqrt{2N}\,\|\cdot\|_{\ell^2}$ produces
+\[
+\bigl\|\mathcal{J}(\theta)-\mathcal{J}(\tilde\theta)\bigr\|_{2\to2}
+\le L_{\mathcal{J}}(\eta,L,\mathcal{B},N,P)\,\|\theta-\tilde\theta\|_{\ell^2},
+\]
+for a finite constant $L_{\mathcal{J}}(\eta,L,\mathcal{B},N,P)$ (under this crude estimate, $L_{\mathcal{J}}$ may grow polynomially in $N$ and $P$). This is sufficient for the quantitative inverse function theorem in \Cref{sec:IFT-scheme}.
+\end{proof}
+
+The crude double-Duhamel estimate underlying Theorem~\ref{thm:Lip-J} yields a Lipschitz constant that scales like
+\[
+L_{\mathcal{J}}(\eta,L,\mathcal{B},N,P)\sim Z_{\max}^2 e^{Z_{\max}L}\,L^2
+\]
+(up to polynomial factors in $(N,P)$ coming from the dimension). This is the natural scaling in view of the double integral structure in \eqref{eq:double-duhamel}. In Sections~\ref{sec:real-square}-\ref{sec:IFT-scheme} we combine the explicit lower singular-value bound at the base (which carries an $e^{-(2N-1)\alpha}$ factor, with $\alpha=\eta\ell/2$) with this Lipschitz estimate and a quantitative inverse function theorem to obtain a finite-length inversion scheme with an explicit local inverse radius of the form
+\[
+r\ \asymp\ \frac{\sqrt{N}\,e^{-(2N-1)\alpha}}{L_{\mathcal{J}}(\eta,L,\mathcal{B},N,P)}.
+\]
+In particular, since $(2N-1)\alpha\approx \eta L$ when $\ell=L/N$, the smallest singular values (and hence the guaranteed inverse radius) naturally carry an $e^{-\eta L}$-type factor in this fixed-height setting.
+
+\begin{theorem}[Uniform-height Lipschitz bound for the seam Jacobian]
+\label{thm:Lip-J-uniform}
+Fix $0<\eta_{\min}\le\eta_{\max}$ and a uniform PD box $\mathcal{B}$. Let $\mathbf{f}(H;\eta)\in\C^M$ be the full seam sample map built from \eqref{eq:f-def} and let $\mathcal{J}(\theta;\eta)$ be its Jacobian with respect to the real block-parameter vector $\theta\in\R^{2N}$. Then there exists a constant
+\[
+L_{\mathcal{J}}^\ast(\eta_{\min},\eta_{\max},L,\mathcal{B},N,P)<\infty
+\]
+such that for every height $\eta\in[\eta_{\min},\eta_{\max}]$ and all $\theta,\tilde\theta$ with $H(\theta),H(\tilde\theta)\in\mathcal{B}^N$,
+\[
+  \bigl\|\mathcal{J}(\theta;\eta)-\mathcal{J}(\tilde\theta;\eta)\bigr\|_{2\to2}
+  \;\le\;
+  L_{\mathcal{J}}^\ast(\eta_{\min},\eta_{\max},L,\mathcal{B},N,P)\,
+  \|\theta-\tilde\theta\|_{\ell^2}.
+\]
+\end{theorem}
+
+\begin{proof}
+This is identical to the proof of Theorem~\ref{thm:Lip-J}, except that we use Lemma~\ref{lem:f-second-deriv-uniform} to bound second derivatives uniformly over $\eta\in[\eta_{\min},\eta_{\max}]$.
+\end{proof}
+
+\section{Real coordinates and the square seam map}
+\label{sec:real-square}
+
+In this section we pass from the complex block coordinates $p_j$ and complex samples $f_k(H;\eta)$ to real coordinates on both the parameter and data side. The goal is to obtain a real Jacobian with the same $\Theta(\sqrt{N})$ conditioning as in Theorem~\ref{thm:base-cond}, together with the Lipschitz bound from Theorem~\ref{thm:Lip-J}.
+
+\subsection{Real block coordinates}
+
+We use the real coordinates obtained from the complex block variables $p_j$:
+\[
+\xi_j^{(1)}:=\Re p_j,\qquad
+\xi_j^{(2)}:=\Im p_j,\qquad
+p_j:=k_j+i h_j.
+\]
+The complex directional derivative with respect to $p_j$ is recovered from the real derivatives with respect to $(\xi_j^{(1)},\xi_j^{(2)})$ by a fixed real-linear change of variables on each block.
+
+We now assemble all block coordinates into a single real vector
+\[
+\xi
+:=(\xi_0^{(1)},\xi_0^{(2)},\dots,\xi_{N-1}^{(1)},\xi_{N-1}^{(2)})
+\in\R^{2N},
+\]
+and denote by $\xi_0$ the point corresponding to the base Hamiltonian $H_{\mathrm{base}}\equiv\tfrac12 I$ (so $\xi_0=0$ in the above parametrization). There is a real-linear isomorphism
+\[
+T_{\mathrm{par}}:\R^{2N}\longrightarrow\C^N,\qquad
+\xi\longmapsto p=(p_j)_{j=0}^{N-1},
+\]
+given blockwise by $p_j=\xi_j^{(1)}+i\xi_j^{(2)}$. In particular, with the Euclidean norms on $\R^{2N}$ and $\C^N$, this identification is an isometry:
+\[
+\|p\|_{\ell^2(\C^N)}=\|\xi\|_{\ell^2(\R^{2N})}.
+\]
+
+\subsection{Real data vector}
+
+On the data side we work with the height-normalized samples $f_k(H;\eta)$ defined in \eqref{eq:f-def} on the full seam grid $k=0,1,\dots,M-1$. We assemble these into a complex vector
+\[
+\mathbf{f}(\xi;\eta):=
+\bigl(f_k(H(\xi);\eta)\bigr)_{k=0}^{M-1}
+\in\C^{M}.
+\]
+To obtain a real map we split into real and imaginary parts.
+
+\begin{definition}[Real seam data]\label{def:real-seam}
+For each Hamiltonian $H$ in the uniform PD box and height $\eta>0$ we define the real data vector
+\[
+\mathcal{S}(H;\eta)
+:=
+\bigl(\Re f_k(H;\eta),\ \Im f_k(H;\eta)\bigr)_{k=0}^{M-1}
+\in\R^{2M}.
+\]
+When we wish to emphasize the dependence on the real coordinates $\xi$, we write
+\[
+\mathcal{S}(\xi;\eta):=\mathcal{S}(H(\xi);\eta).
+\]
+\end{definition}
+
+There is an obvious real-linear isomorphism
+\[
+T_{\mathrm{data}}:\C^{M}
+\longrightarrow \R^{2M},
+\qquad
+(F_k)_{k=0}^{M-1}
+\longmapsto
+(\Re F_k,\Im F_k)_{k=0}^{M-1},
+\]
+whose operator norm and inverse operator norm are both equal to~$1$.
+
+\subsection{Real Jacobian and conditioning}
+
+Let $J^{(\eta)}_\R$ denote the real Jacobian of the full seam data $\mathcal{S}$ with respect to the real block coordinates $\xi$ at the base point $\xi_0$:
+\[
+J^{(\eta)}_\R
+:=\left(
+\frac{\partial\mathcal{S}_\alpha(\xi;\eta)}{\partial\xi_\beta}
+\Big|_{\xi=\xi_0}
+\right)_{\alpha,\beta}
+\in\R^{2M\times 2N}.
+\]
+To relate $J^{(\eta)}_\R$ to the complex packet structure, it is convenient to introduce the complex Jacobian with respect to the real coordinate directions $k_j$:
+\[
+J^{(\eta)}_{k}
+:=\Bigl(\partial_{k_j}f_k(H;\eta)\Big|_{H_{\mathrm{base}}}\Bigr)_{0\le k\le M-1,\ 0\le j\le N-1}
+\in\C^{M\times N}.
+\]
+By Lemmas~\ref{lem:height-packet} and~\ref{lem:packet-amplitudes}, this satisfies the diagonal-exponential-diagonal factorization
+\[
+J^{(\eta)}_{k}=W^{(\eta)}\,F\,D^{(\eta)}_{k},
+\qquad (D^{(\eta)}_{k})_{j,j}=2\,e^{-q_j\alpha},
+\quad q_j=2j+1,\quad \alpha=\eta\ell/2.
+\]
+Moreover, at the base we have the exact relation $\partial_{h_j}f_k=-i\,\partial_{k_j}f_k$, so for a real parameter increment
+$\delta\xi=(\delta k_j,\delta h_j)_{j=0}^{N-1}\in\R^{2N}$ we obtain the linearization
+\[
+\delta \mathbf{f}
+:=D\mathbf{f}(\xi_0;\eta)\,\delta\xi
+=\sum_{j=0}^{N-1}(\delta k_j-i\,\delta h_j)\, (J^{(\eta)}_{k})_{\cdot,j}.
+\]
+Equivalently, define the real-linear isometry
+\[
+T_{\mathrm{par}}^{-}:\R^{2N}\to\C^N,\qquad
+T_{\mathrm{par}}^{-}(\delta\xi):=\bigl(\delta k_j-i\,\delta h_j\bigr)_{j=0}^{N-1},
+\]
+and the real-linear isometry
+\[
+T_{\mathrm{data}}:\C^{M}\to\R^{2M},\qquad (w_k)_{k=0}^{M-1}\mapsto(\Re w_k,\Im w_k)_{k=0}^{M-1}.
+\]
+Then the base Jacobian satisfies the exact factorization
+\[
+J^{(\eta)}_\R
+=
+T_{\mathrm{data}}\circ J^{(\eta)}_{k}\circ T_{\mathrm{par}}^{-}.
+\]
+Since $T_{\mathrm{par}}^{-}$ and $T_{\mathrm{data}}$ are isometries, the singular values of $J^{(\eta)}_\R$ are exactly the singular values of $J^{(\eta)}_{k}$, each appearing with multiplicity $2$.
+In particular, using $F^\ast F=PN\,I_N$ we obtain
+\[
+\sigma_j(J^{(\eta)}_{k})=2\sqrt{PN}\,e^{-(2j+1)\alpha},
+\qquad j=0,1,\dots,N-1.
+\]
+
+\subsection{The square seam map}
+
+In applications one often wants a square system obtained by restricting to exactly $2N$ real seam coordinates; this yields a direct (non-least-squares) local inversion statement via a quantitative inverse function theorem. We therefore fix the explicit index set
+\[
+\mathcal{K}_0:=\{0,1,\dots,N-1\}\subset\{0,1,\dots,M-1\},
+\]
+and define the square seam map
+\begin{equation}\label{eq:S0-def}
+  \mathcal{S}_0(H;\eta)
+  :=
+  \bigl(\Re f_k(H;\eta),\ \Im f_k(H;\eta)\bigr)_{k\in\mathcal{K}_0}\in\R^{2N},
+\end{equation}
+where $f_k(H;\eta)$ is given by \eqref{eq:f-def}.
+
+Let $J^{(\eta)}_{k,0}\in\C^{N\times N}$ denote the complex Jacobian of the restricted complex data vector
+\[
+f_0(H;\eta):=\bigl(f_k(H;\eta)\bigr)_{k\in\mathcal{K}_0}\in\C^N
+\]
+with respect to the real block coordinates $k_j$ at the base Hamiltonian:
+\[
+J^{(\eta)}_{k,0}:=\Bigl(\partial_{k_j} f_k(H;\eta)\Big|_{H_{\mathrm{base}}}\Bigr)_{k\in\mathcal{K}_0,\ 0\le j\le N-1}.
+\]
+Restricting Lemma~\ref{lem:J-factorization} and using Lemma~\ref{lem:packet-amplitudes} gives
+\[
+J^{(\eta)}_{k,0}=W^{(\eta)}_0\,F_0\,D^{(\eta)}_{k},
+\qquad (D^{(\eta)}_{k})_{j,j}=2e^{-q_j\alpha},
+\quad q_j=2j+1,\quad \alpha=\eta\ell/2,
+\]
+where $W^{(\eta)}_0$ is diagonal with unimodular entries and
+\[
+(F_0)_{k,j}:=e^{iq_j u_k},\qquad k,j=0,1,\dots,N-1.
+\]
+On $\mathcal{K}_0=\{0,\dots,N-1\}$, $F_0$ is a diagonal modulation of the $N\times N$ Fourier matrix, hence $F_0^\ast F_0=N\,I_N$ and all singular values of $F_0$ equal $\sqrt{N}$.
+
+Finally, the real Jacobian $J^{(\eta)}_{0}:=D\mathcal{S}_0(\xi_0;\eta)\in\R^{2N\times 2N}$ is obtained by splitting real/imaginary parts on the data side and using the real-linear isometry $\delta\xi\mapsto(\delta k_j-i\delta h_j)_j$ on the parameter side, so its nonzero singular values are those of $J^{(\eta)}_{k,0}$, each with multiplicity $2$.
+
+\begin{lemma}[Square seam restriction at the base]\label{lem:square-restriction}
+Fix $L=N\ell$, $\eta>0$, and set $\alpha:=\eta\ell/2$. Let $\mathcal{K}_0=\{0,1,\dots,N-1\}$,
+$u_k=\pi k/N$, $x_k=2u_k/\ell$, and $z_k=x_k+i\eta$.
+Let
+\[
+f_0(H;\eta):=\bigl(f_k(H;\eta)\bigr)_{k\in\mathcal{K}_0}\in\C^N
+\]
+and let $J^{(\eta)}_{k,0}\in\C^{N\times N}$ be the complex Jacobian
+\[
+J^{(\eta)}_{k,0}:=\Bigl(\partial_{k_j} f_k(H;\eta)\Big|_{H_{\mathrm{base}}}\Bigr)_{k\in\mathcal{K}_0,\ 0\le j\le N-1}.
+\]
+Then
+\[
+J^{(\eta)}_{k,0}=W_0^{(\eta)}\,F_0\,D^{(\eta)}_{k},
+\]
+where $W_0^{(\eta)}$ is diagonal with $\bigl|(W_0^{(\eta)})_{k,k}\bigr|=1$,
+\[
+(F_0)_{k,j}=e^{iq_j u_k},\qquad q_j:=2j+1,
+\]
+and $D^{(\eta)}_{k}$ is diagonal with $(D^{(\eta)}_{k})_{j,j}=2e^{-q_j\alpha}$.
+Moreover $F_0^\ast F_0=N\,I_N$, so
+\[
+\sigma_j\bigl(J^{(\eta)}_{k,0}\bigr)=2\sqrt{N}\,e^{-q_j\alpha},
+\qquad j=0,1,\dots,N-1.
+\]
+In particular,
+\[
+2\sqrt{N}\,e^{-(2N-1)\alpha}\le \sigma_{\min}\bigl(J^{(\eta)}_{k,0}\bigr)
+\le \sigma_{\max}\bigl(J^{(\eta)}_{k,0}\bigr)\le 2\sqrt{N}\,e^{-\alpha}.
+\]
+
+Finally, the real Jacobian $J^{(\eta)}_{0}:=D\mathcal{S}_0(\xi_0;\eta)\in\R^{2N\times 2N}$
+has the same nonzero singular values as $J^{(\eta)}_{k,0}$, each appearing with multiplicity $2$.
+\end{lemma}
+
+\begin{proof}
+The factorization is the restriction of Lemma~\ref{lem:height-packet} (with $C_{\mathrm{kdir}}=2$ from Lemma~\ref{lem:packet-amplitudes}) to the index set $\mathcal{K}_0=\{0,\dots,N-1\}$:
+for $k\in\mathcal{K}_0$ and $0\le j\le N-1$,
+\[
+\partial_{k_j} f_k(H;\eta)\Big|_{H_{\mathrm{base}}}
+=
+\underbrace{\frac{\sin(u_k+i\alpha)}{|\sin(u_k+i\alpha)|}}_{=:(W_0^{(\eta)})_{k,k}}
+\cdot
+\underbrace{e^{iq_j u_k}}_{=(F_0)_{k,j}}
+\cdot
+\underbrace{2e^{-q_j\alpha}}_{=(D^{(\eta)}_{k})_{j,j}}.
+\]
+Next, with $u_k=\pi k/N$ and $q_j=2j+1$,
+\[
+(F_0)_{k,j}=e^{i(2j+1)\pi k/N}=e^{i\pi k/N}\,e^{i2\pi jk/N},
+\]
+so $F_0$ is a unitary diagonal modulation of the (unnormalized) Fourier matrix, hence $F_0^\ast F_0=N\,I_N$ and all singular values of $F_0$ equal $\sqrt{N}$.
+
+Since $W_0^{(\eta)}$ is diagonal unimodular, it is unitary. Therefore
+\[
+(J^{(\eta)}_{k,0})^\ast J^{(\eta)}_{k,0}
+= (D^{(\eta)}_{k})^\ast F_0^\ast F_0 D^{(\eta)}_{k}
+= N\,(D^{(\eta)}_{k})^\ast D^{(\eta)}_{k},
+\]
+and the singular values are $\sigma_j(J^{(\eta)}_{k,0})=2\sqrt{N}e^{-q_j\alpha}$.
+
+For the real Jacobian: at the base, $\partial_{h_j}f_k=-i\,\partial_{k_j}f_k$, so the linearization depends on the coefficient $\delta k_j-i\delta h_j$. Splitting real/imaginary parts on the data side and using the isometry $\delta\xi\mapsto(\delta k_j-i\delta h_j)_j$ on the parameter side shows that realification duplicates the singular values, giving the final statement.
+\end{proof}
+
+\bigskip
+
+\section{Quantitative inverse function theorem and finite-length scheme}
+\label{sec:IFT-scheme}
+
+We now combine the conditioning and Lipschitz estimates developed so far with a quantitative inverse function theorem to obtain a finite-length scheme for canonical systems: for each fixed length $L$ and height $\eta>0$, the square seam map $\mathcal{S}_0$ is a $C^1$ diffeomorphism from a suitable ball in parameter space onto its image, with explicit bounds on the inverse and on the size of the ball.
+
+\subsection{A quantitative inverse function theorem}
+
+We begin with a quantitative version in finite-dimensional Hilbert spaces. For reference, see \cite[Ch.~9]{Rudin1987} for the classical inverse function theorem (without explicit constants); we include a full proof below.
+
+\begin{theorem}[Quantitative inverse function theorem]
+\label{thm:quant-IFT}
+Let $X$ and $Y$ be finite-dimensional real Hilbert spaces, and let $F:U\to Y$ be a $C^1$ map on an open set $U\subset X$. Fix $x_0\in U$ and $R>0$ such that the closed ball
+\[
+B_X(x_0,R):=\{x\in X:\|x-x_0\|\le R\}
+\]
+satisfies $B_X(x_0,R)\subset U$. Suppose:
+
+\begin{enumerate}[label=(\roman*),itemsep=0.3em]
+\item The derivative $DF(x)$ exists and is continuous on $B_X(x_0,R)$.
+
+\item $DF(x_0)$ is invertible with
+\[
+\sigma_{\min}(DF(x_0))\ge s_0>0,
+\]
+where $\sigma_{\min}$ denotes the smallest singular value.
+
+\item There is a Lipschitz bound on $DF$:
+\[
+\|DF(x)-DF(y)\|_{X\to Y}
+\le K\|x-y\|\qquad\text{for all }x,y\in B_X(x_0,R).
+\]
+\end{enumerate}
+
+If $r>0$ is chosen so that
+\[
+r\le R,\qquad
+3K r\le\frac{s_0}{2},
+\]
+then $F$ is injective on $B_X(x_0,r)$, and its restriction to the open ball
+\[
+B_X^\circ(x_0,r):=\{x\in X:\|x-x_0\|< r\}
+\]
+is a $C^1$ diffeomorphism from $B_X^\circ(x_0,r)$ onto the open set $F(B_X^\circ(x_0,r))$.
+
+Moreover, for all $x_1,x_2\in B_X(x_0,r)$,
+\[
+\frac{s_0}{2}\,\|x_1-x_2\|
+\ \le\
+\|F(x_1)-F(x_2)\|
+\ \le\
+\bigl(\|DF(x_0)\|+3K r\bigr)\,\|x_1-x_2\|.
+\]
+In particular, the inverse map $F^{-1}:F(B_X^\circ(x_0,r))\to B_X^\circ(x_0,r)$ is globally Lipschitz with constant at most $2/s_0$.
+\end{theorem}
+
+\begin{proof}
+The argument is standard; see, e.g., \cite[Ch.~9]{Rudin1987}. We include details for completeness.
+
+Let $x_1,x_2\in B_X(x_0,R)$ and set $h:=x_1-x_2$. By the fundamental theorem of calculus,
+\[
+F(x_1)-F(x_2)
+=\int_0^1 DF(x_2+t h)\,h\,dt.
+\]
+Write
+\[
+DF(x_2+t h)
+=DF(x_0)+\bigl(DF(x_2+t h)-DF(x_0)\bigr).
+\]
+Taking norms and using the triangle inequality,
+\[
+\|F(x_1)-F(x_2)\|
+\ge \|DF(x_0)h\| - \int_0^1\|DF(x_2+t h)-DF(x_0)\|\,\|h\|\,dt.
+\]
+By assumption (iii),
+\[
+\|DF(x_2+t h)-DF(x_0)\|
+\le K\|x_2+t h-x_0\|
+\le K\bigl(\|x_2-x_0\|+t\|h\|\bigr).
+\]
+If $x_1,x_2\in B_X(x_0,r)$ then $\|x_2-x_0\|\le r$ and $\|h\|\le 2r$, hence
+\[
+\|DF(x_2+t h)-DF(x_0)\|
+\le 3K r
+\qquad\text{for all }t\in[0,1].
+\]
+Therefore
+\[
+\|F(x_1)-F(x_2)\|
+\ge \|DF(x_0)h\| - 3K r\|h\|.
+\]
+The smallest singular value hypothesis gives $\|DF(x_0)h\|\ge s_0\|h\|$, so
+\[
+\|F(x_1)-F(x_2)\|
+\ge (s_0-3K r)\,\|h\|.
+\]
+If we choose $r>0$ such that $3K r\le s_0/2$, then
+\[
+\|F(x_1)-F(x_2)\|
+\ge \frac{s_0}{2}\,\|h\|
+\]
+for all $x_1,x_2\in B_X(x_0,r)$. This proves injectivity on $B_X(x_0,r)$ and the lower Lipschitz bound.
+
+For the upper bound, use the same integral formula together with
+\[
+\|DF(x_2+t h)\|
+\le \|DF(x_0)\|+\|DF(x_2+t h)-DF(x_0)\|
+\le \|DF(x_0)\|+3K r,
+\]
+valid for $x_1,x_2\in B_X(x_0,r)$. This yields
+\[
+\|F(x_1)-F(x_2)\|
+\le \bigl(\|DF(x_0)\|+3K r\bigr)\,\|h\|.
+\]
+
+Finally, since $F$ is $C^1$ on the open set $U$ and $DF$ is invertible on $B_X^\circ(x_0,r)$ by continuity and the lower bound, the classical inverse function theorem implies that $F$ is a $C^1$ local diffeomorphism on $B_X^\circ(x_0,r)$. Combined with injectivity, this gives that $F$ is a $C^1$ diffeomorphism from $B_X^\circ(x_0,r)$ onto $F(B_X^\circ(x_0,r))$. The Lipschitz bound for $F^{-1}$ is just the lower Lipschitz bound rewritten:
+\[
+\|F^{-1}(y_1)-F^{-1}(y_2)\|
+\le \frac{2}{s_0}\,\|y_1-y_2\|,
+\]
+for all $y_1,y_2\in F(B_X^\circ(x_0,r))$.
+\end{proof}
+
+\subsection{Application to the square seam map}
+
+We now apply Theorem~\ref{thm:quant-IFT} to the square seam map $\mathcal{S}_0(\xi;\eta)$ constructed in \Cref{sec:real-square}. Recall that $\xi\in\R^{2N}$, and $\mathcal{S}_0(\xi;\eta)\in\R^{2N}$ collects the real and imaginary parts of the height-normalized samples $f_k(H(\xi);\eta)$ at a subset $\mathcal{K}_{0}$ of the bulk indices, with $|\mathcal{K}_{0}|=N$.
+
+Let $\xi_0$ denote the base point corresponding to $H_{\mathrm{base}}\equiv\tfrac12 I$. Let
+\[
+J_0^{(\eta)}:=D\mathcal{S}_0(\xi_0;\eta)\in\R^{2N\times 2N}
+\]
+be the real Jacobian at $\xi_0$. By Lemma~\ref{lem:square-restriction}, the base derivative $DF(\xi_0)=J_0^{(\eta)}$ is invertible, and its singular values are of order $\sqrt{N}$ with explicit dependence on $(\eta,L,N,\mathcal{B})$ through the factors $e^{-q_j\alpha}$.
+
+\begin{theorem}[Finite-length seam scheme]\label{thm:scheme}
+Fix $L>0$, $N\ge1$, $\eta>0$ and a uniform PD box $\mathcal{B}$ containing $H_{\mathrm{base}}\equiv\tfrac12 I$. Let $\xi_0$ denote the real block coordinates of $H_{\mathrm{base}}$, and let $\mathcal{S}_0(\xi;\eta)$ be the square seam map defined above. Then there exist constants $r>0$ and $0<c_*,C_*<\infty$, depending only on $(L,N,\eta,\mathcal{B})$, such that:
+
+\begin{enumerate}[label=(\roman*),itemsep=0.35em]
+\item The closed ball $B(\xi_0,r)\subset\R^{2N}$ is contained in the parameter set corresponding to $\mathcal{B}^N$.
+
+\item The map
+\[
+\mathcal{S}_0(\cdot;\eta):B^\circ(\xi_0,r)\longrightarrow\R^{2N}
+\]
+is a $C^1$ diffeomorphism onto its image.
+
+\item For all $\xi_1,\xi_2\in B(\xi_0,r)$,
+\[
+c_*\sqrt{N}\,\|\xi_1-\xi_2\|_{\ell^2}
+\ \le\
+\bigl\|\mathcal{S}_0(\xi_1;\eta)-\mathcal{S}_0(\xi_2;\eta)\bigr\|_{\ell^2}
+\ \le\
+C_*\sqrt{N}\,\|\xi_1-\xi_2\|_{\ell^2}.
+\]
+
+\item Consequently, the inverse map
+\[
+\mathcal{S}_0(\cdot;\eta)^{-1}:
+\mathcal{S}_0\bigl(B^\circ(\xi_0,r);\eta\bigr)\longrightarrow B^\circ(\xi_0,r)
+\]
+is globally Lipschitz with constant at most $1/(c_*\sqrt{N})$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+We apply Theorem~\ref{thm:quant-IFT} with $X=Y=\R^{2N}$, $x_0=\xi_0$ and $F(\xi)=\mathcal{S}_0(\xi;\eta)$. The derivative $DF(\xi)$ exists and is continuous on the parameter set corresponding to $\mathcal{B}^N$, by standard ODE dependence on parameters (see, for example, \cite[Ch.~1]{CoddingtonLevinson1955}).
+
+By the explicit construction of $\mathcal{S}_0$ in \eqref{eq:S0-def} and the discussion in \Cref{sec:real-square}, all singular values of $J_0^{(\eta)}=DF(\xi_0)$ satisfy
+\[
+\sigma_{\min}(DF(\xi_0))=\sigma_{\min}\bigl(J^{(\eta)}_0\bigr)
+=2\sqrt{N}\,e^{-(2N-1)\alpha},
+\qquad \alpha=\eta\ell/2,
+\]
+and we set
+\[
+s_0:=2\sqrt{N}\,e^{-(2N-1)\alpha}.
+\]
+By Theorem~\ref{thm:Lip-J} (applied to the square sampling set $\mathcal{K}_0=\{0,\dots,N-1\}$, i.e.\ $M=N$), the Jacobian $DF(\xi)$ is Lipschitz on a sufficiently small ball $B(\xi_0,R)$ contained in the parameter set corresponding to $\mathcal{B}^N$, with
+\[
+\|DF(\xi)-DF(\tilde\xi)\|_{2\to2}
+\le L_{\mathcal{J}}(\eta,L,\mathcal{B},N,1,R)\,\|\xi-\tilde\xi\|,
+\]
+where the argument $1$ corresponds to using $M=N$ samples (equivalently $P=1$) for the square restriction. We denote this Lipschitz constant by $K:=L_{\mathcal{J}}(\eta,L,\mathcal{B},N,1,R)$.
+
+Choosing
+\[
+r:=\min\left\{R,\ \frac{s_0}{6K}\right\}
+\]
+ensures that the hypotheses of Theorem~\ref{thm:quant-IFT} are satisfied, and that $B(\xi_0,r)\subset B(\xi_0,R)$ lies inside the parameter set corresponding to $\mathcal{B}^N$. Hence the conclusions (ii) and the lower and upper Lipschitz bounds then follow directly from Theorem~\ref{thm:quant-IFT}.
+\end{proof}
+
+\begin{remark}[Scaling of the inverse radius]\label{rem:radius-scaling}
+For each fixed $L$, $N$, $\eta$ and $\mathcal{B}$, Theorem~\ref{thm:scheme} yields a radius $r=r(L,N,\eta,\mathcal{B})>0$. Quantitatively, the construction gives
+\[
+r\ \asymp\ \frac{\sigma_{\min}(DF(\xi_0))}{K},
+\]
+where $K$ is a Lipschitz constant for $DF$ on a neighbourhood of $\xi_0$ (as in Theorem~\ref{thm:quant-IFT}). In the square seam setting, Lemma~\ref{lem:square-restriction} gives the explicit base value
+\[
+\sigma_{\min}(DF(\xi_0))=2\sqrt{N}\,e^{-(2N-1)\alpha},\qquad \alpha=\eta\ell/2,
+\]
+so the guaranteed inverse radius inherits the same $e^{-(2N-1)\alpha}$ factor (and hence an $e^{-\eta L}$-type dependence when $\ell=L/N$).
+\end{remark}
+
+\subsection{Summary of the finite-length scheme}
+
+For ease of reference we summarize the main outcome of the finite-length construction developed in this paper.
+
+\begin{theorem}[Finite-length canonical-systems scheme]\label{thm:scheme-summary}
+Fix $L>0$, $N\ge1$, $\eta>0$ and a uniform PD box $\mathcal{B}$ containing $H_{\mathrm{base}}\equiv\tfrac12 I$. Let $H(\xi)$ be the block-constant Hamiltonian associated with $\xi\in\R^{2N}$, and let $\mathcal{S}_0(\xi;\eta)$ be the square seam map built from the height-normalized endpoint samples as above. Then there exist constants $r>0$ and $0<c_*,C_*<\infty$ such that:
+
+\begin{enumerate}[label=(\alph*),itemsep=0.35em]
+\item For every $\xi\in B(\xi_0,r)$ the Hamiltonian $H(\xi)$ is real, PSD with $\tr H\equiv1$ on $[0,L]$ and belongs to $\mathcal{B}^N$.
+
+\item The map $\xi\mapsto\mathcal{S}_0(\xi;\eta)$ is a $C^1$ diffeomorphism from $B(\xi_0,r)$ onto its image in $\R^{2N}$.
+
+\item For all $\xi_1,\xi_2\in B(\xi_0,r)$,
+\[
+c_*\sqrt{N}\,\|\xi_1-\xi_2\|_{\ell^2}
+\ \le\
+\bigl\|\mathcal{S}_0(\xi_1;\eta)-\mathcal{S}_0(\xi_2;\eta)\bigr\|_{\ell^2}
+\ \le\
+C_*\sqrt{N}\,\|\xi_1-\xi_2\|_{\ell^2}.
+\]
+
+\item In particular, given any seam data $y^\star$ in the image $\mathcal{S}_0(B^\circ(\xi_0,r);\eta)$, there exists a unique block-constant Hamiltonian $H(\xi^\star)$ with $\xi^\star\in B^\circ(\xi_0,r)$ such that $\mathcal{S}_0(\xi^\star;\eta)=y^\star$, and the inverse map $y^\star\mapsto\xi^\star$ is Lipschitz with constant at most $1/(c_*\sqrt{N})$.
+\end{enumerate}
+\end{theorem}
+
+This theorem is the main output of the paper: it provides a robust, quantitatively controlled inverse map from seam data at height $\eta$ on a finite interval $[0,L]$ back to block-constant canonical-system Hamiltonians in a fixed uniform PD box.
+
+\bigskip
+
+\section{Concluding remarks}
+\label{sec:conclusion}
+
+We conclude with a brief summary of the structure developed here.
+
+\subsection{Summary of the linear theory}
+
+Starting from the classical canonical-systems framework of de~Branges \cite{deBranges1968,Romanov2014}, we have:
+
+\begin{itemize}[leftmargin=2em,itemsep=0.35em]
+\item Identified the base flow at $H_{\mathrm{base}}\equiv\tfrac12 I$ as a pure rotation and normalized the endpoint Hermite-Biehler function accordingly (\Cref{sec:CS}).
+
+\item Developed the algebraic identities needed to manipulate the Pauli-type matrices and rotations (\Cref{sec:Algebra}).
+
+\item Discretized the interval $[0,L]$ into $N$ constant blocks and introduced a canonical sampling grid and odd block frequencies (\Cref{sec:blocks}).
+
+\item Shown that the first variation of the gauge-normalized endpoint function with respect to a single block parameter produces a single complex exponential packet $\sin u\,e^{iq_j u}$ in the cell phase $u=x\ell/2$ (\Cref{sec:kernel}).
+
+\item Extended this packet picture to complex spectral parameters $z=x+i\eta$ and introduced an intrinsic amplitude based on $|\sin(u)|$ (\Cref{sec:height-packets}).
+
+\item Combined the exponential packet structure with exact discrete orthogonality of the exponential system on the seam grid to obtain an explicit Jacobian factorization and explicit singular values at the base: a $\sqrt{PN}$ scale from the exponential matrix and a diagonal decay $e^{-(2j+1)\alpha}$ from height (\Cref{sec:exp-frame}).
+
+\item Introduced a height-strip domain at height $\eta$, reviewed the $\mathrm{SU}(1,1)$ structure of the Weyl Schur function, and established Schur-metric control for blockwise updates (\Cref{sec:strip-SU11}).
+
+\item Used a double Duhamel representation to bound second derivatives of the height-normalized seam samples and derived a global Lipschitz bound for the Jacobian on the uniform PD box, with crude scaling of the form $Z_{\max}^2 e^{Z_{\max}L}L^2$ on the height strip (\Cref{sec:Lip-Jacobian}).
+
+\item Passed to real coordinates on both parameter and data sides, constructed a square seam map, and applied a quantitative inverse function theorem to obtain a finite-length canonical-systems scheme with explicit conditioning and local invertibility (\Cref{sec:real-square,sec:IFT-scheme}).
+\end{itemize}
+
+Throughout, the analysis applies to arbitrary block-constant PSD Hamiltonians in a fixed neighbourhood of the base $H_{\mathrm{base}}$.
+
+\bigskip
+
+\bigskip
+\hrule
+\bigskip
+
+\begin{thebibliography}{99}
+
+\bibitem{CoddingtonLevinson1955}
+E.~A. Coddington and N.~Levinson,
+\emph{Theory of ordinary differential equations},
+McGraw-Hill, New York, 1955.
+
+\bibitem{ArovDym2008}
+D.~Z. Arov and H.~Dym,
+\emph{$J$-contractive matrix valued functions and related topics},
+Encyclopedia of Mathematics and its Applications, vol.~116, Cambridge University Press, Cambridge, 2008.
+
+\bibitem{Beardon1983}
+A.~F. Beardon,
+\emph{The geometry of discrete groups},
+Graduate Texts in Mathematics, vol.~91, Springer-Verlag, New York, 1983.
+
+\bibitem{deBranges1968}
+L.~de~Branges,
+\emph{Hilbert spaces of entire functions},
+Prentice-Hall, Inc., Englewood Cliffs, N.J., 1968.
+
+\bibitem{Duren1970}
+P.~L. Duren,
+\emph{Theory of $H^p$ spaces},
+Pure and Applied Mathematics, Vol.~38, Academic Press, New York-London, 1970.
+
+\bibitem{Garnett2007}
+J.~B. Garnett,
+\emph{Bounded analytic functions},
+Revised first edition, Graduate Texts in Mathematics, vol.~236, Springer, New York, 2007.
+
+\bibitem{Potapov1960}
+V.~P. Potapov,
+\emph{The multiplicative structure of $J$-contractive matrix functions},
+Amer. Math. Soc. Transl. (2) 15 (1960), 131-243.
+
+\bibitem{Romanov2014}
+R.~Romanov,
+\emph{Canonical systems and de Branges spaces},
+arXiv:1408.6022 (2014).
+
+\bibitem{Rudin1987}
+W.~Rudin,
+\emph{Real and complex analysis},
+3rd ed., McGraw-Hill Book Co., New York, 1987.
+
+\end{thebibliography}
+
+\end{document}
